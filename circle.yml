@@ -1,4 +1,4 @@
-machine:
+machine: 
   java:
     version: oraclejdk8
 test:
