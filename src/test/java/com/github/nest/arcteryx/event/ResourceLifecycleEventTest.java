@@ -32,6 +32,13 @@ public class ResourceLifecycleEventTest {
 		};
 	}
 
+	@Test
+	public void testDestory() {
+		Resource r = new Resource("test");
+		r.addLifecycleListener(new LifecycleListener());
+		r.destroy();
+	}
+
 	private static class Resource extends AbstractResource {
 		public Resource(String id) {
 			super(id);
@@ -39,7 +46,6 @@ public class ResourceLifecycleEventTest {
 	}
 
 	private static class LifecycleListener extends ResourceLifecycleEventAdapter {
-
 		/**
 		 * (non-Javadoc)
 		 * 
@@ -48,7 +54,40 @@ public class ResourceLifecycleEventTest {
 		@Override
 		public void resourceDidConstruct(ResourceLifecycleEvent evt) {
 			assertEquals("test", evt.getEventTarget().getId());
+			assertEquals(ResourceLifecycleEvent.EventType.RESOURCE_DID_CONSTRUCT, evt.getEventType());
 		}
 
+		/**
+		 * (non-Javadoc)
+		 * 
+		 * @see com.github.nest.arcteryx.event.ResourceLifecycleEventAdapter#resourceShouldDestroy(com.github.nest.arcteryx.event.ResourceLifecycleEvent)
+		 */
+		@Override
+		public void resourceShouldDestroy(ResourceLifecycleEvent evt) {
+			assertEquals("test", evt.getEventTarget().getId());
+			assertEquals(ResourceLifecycleEvent.EventType.RESOURCE_SHOULD_DESTROY, evt.getEventType());
+		}
+
+		/**
+		 * (non-Javadoc)
+		 * 
+		 * @see com.github.nest.arcteryx.event.ResourceLifecycleEventAdapter#resourceWillDestroy(com.github.nest.arcteryx.event.ResourceLifecycleEvent)
+		 */
+		@Override
+		public void resourceWillDestroy(ResourceLifecycleEvent evt) {
+			assertEquals("test", evt.getEventTarget().getId());
+			assertEquals(ResourceLifecycleEvent.EventType.RESOURCE_WILL_DESTROY, evt.getEventType());
+		}
+
+		/**
+		 * (non-Javadoc)
+		 * 
+		 * @see com.github.nest.arcteryx.event.ResourceLifecycleEventAdapter#resourceDidDestory(com.github.nest.arcteryx.event.ResourceLifecycleEvent)
+		 */
+		@Override
+		public void resourceDidDestory(ResourceLifecycleEvent evt) {
+			assertEquals("test", evt.getEventTarget().getId());
+			assertEquals(ResourceLifecycleEvent.EventType.RESOURCE_DID_DESTROY, evt.getEventType());
+		}
 	}
 }
