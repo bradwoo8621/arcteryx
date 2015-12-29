@@ -12,7 +12,7 @@ after_success:
   - sudo sh jpmInstall.sh
   - sudo jpm install com.codacy:codacy-coverage-reporter:assembly
   - export CODACY_PROJECT_TOKEN=%9370c906aa584f6b968f83505ec4f6ff%
-  - codacy-coverage-reporter --version
-  - codacy-coverage-reporter -l Java -r arcteryx/target/site/jacoco/jacoco.xml --prefix arcteryx/src/main/java/ 
+  - codacy-coverage-reporter --help
+  - codacy-coverage-reporter -l Java -r arcteryx/target/site/jacoco/jacoco.xml
   - mvn clean cobertura:cobertura coveralls:report
   
