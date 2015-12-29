@@ -45,6 +45,7 @@ public abstract class AbstractResource implements IResource {
 	 * default do nothing. override this method to add specific logic.
 	 */
 	protected void doConstruct() {
+		// default do nothing
 	}
 
 	/**
@@ -79,6 +80,7 @@ public abstract class AbstractResource implements IResource {
 	 * default do nothing. override this method to add specific logic.
 	 */
 	protected void doDestroy() {
+		// default do nothing
 	}
 
 	/**

@@ -20,11 +20,11 @@ import com.github.nest.arcteryx.event.ResourceRegistrationEventDispatcher;
  * @author brad.wu
  */
 public abstract class AbstractContainer extends AbstractResource implements IContainer {
+	private Map<String, IResource> resourceMap = new ConcurrentHashMap<String, IResource>();
+
 	public AbstractContainer(String id) {
 		super(id);
 	}
-
-	private Map<String, IResource> resourceMap = new ConcurrentHashMap<String, IResource>();
 
 	/**
 	 * (non-Javadoc)

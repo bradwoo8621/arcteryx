@@ -15,6 +15,7 @@ public class ResourceLifecycleEventAdapter implements IResourceLifecycleEventLis
 	 * @see com.github.nest.arcteryx.event.IResourceLifecycleEventListener#resourceDidConstruct(com.github.nest.arcteryx.event.ResourceLifecycleEvent)
 	 */
 	public void resourceDidConstruct(ResourceLifecycleEvent evt) {
+		// default do nothing
 	}
 
 	/**
@@ -23,6 +24,7 @@ public class ResourceLifecycleEventAdapter implements IResourceLifecycleEventLis
 	 * @see com.github.nest.arcteryx.event.IResourceLifecycleEventListener#resourceShouldDestroy(com.github.nest.arcteryx.event.ResourceLifecycleEvent)
 	 */
 	public void resourceShouldDestroy(ResourceLifecycleEvent evt) {
+		// default do nothing
 	}
 
 	/**
@@ -31,6 +33,7 @@ public class ResourceLifecycleEventAdapter implements IResourceLifecycleEventLis
 	 * @see com.github.nest.arcteryx.event.IResourceLifecycleEventListener#resourceWillDestroy(com.github.nest.arcteryx.event.ResourceLifecycleEvent)
 	 */
 	public void resourceWillDestroy(ResourceLifecycleEvent evt) {
+		// default do nothing
 	}
 
 	/**
@@ -39,5 +42,6 @@ public class ResourceLifecycleEventAdapter implements IResourceLifecycleEventLis
 	 * @see com.github.nest.arcteryx.event.IResourceLifecycleEventListener#resourceDidDestory(com.github.nest.arcteryx.event.ResourceLifecycleEvent)
 	 */
 	public void resourceDidDestory(ResourceLifecycleEvent evt) {
+		// default do nothing
 	}
 }
