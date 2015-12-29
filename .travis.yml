@@ -8,6 +8,6 @@ after_success:
   - mvn clean cobertura:cobertura coveralls:report
   - curl http://www.jpm4j.org/install/script | sh
   - jpm install com.codacy:codacy-coverage-reporter:assembly
-  - export CODACY_PROJECT_TOKEN=%Project_Token%
+  - export CODACY_PROJECT_TOKEN=%9370c906aa584f6b968f83505ec4f6ff%
   - codacy-coverage-reporter -l Java -r coverage.xml
   
