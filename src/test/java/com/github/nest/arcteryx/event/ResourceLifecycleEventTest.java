@@ -35,8 +35,10 @@ public class ResourceLifecycleEventTest {
 	@Test
 	public void testDestory() {
 		Resource r = new Resource("test");
-		r.addLifecycleListener(new LifecycleListener());
+		LifecycleListener listener = new LifecycleListener();
+		r.addLifecycleListener(listener);
 		r.destroy();
+		assertEquals(3, listener.getCount());
 	}
 
 	private static class Resource extends AbstractResource {
@@ -46,6 +48,7 @@ public class ResourceLifecycleEventTest {
 	}
 
 	private static class LifecycleListener extends ResourceLifecycleEventAdapter {
+		private int count = 0;
 		/**
 		 * (non-Javadoc)
 		 * 
@@ -55,6 +58,7 @@ public class ResourceLifecycleEventTest {
 		public void resourceDidConstruct(ResourceLifecycleEvent evt) {
 			assertEquals("test", evt.getEventTarget().getId());
 			assertEquals(ResourceLifecycleEvent.EventType.RESOURCE_DID_CONSTRUCT, evt.getEventType());
+			count++;
 		}
 
 		/**
@@ -66,6 +70,7 @@ public class ResourceLifecycleEventTest {
 		public void resourceShouldDestroy(ResourceLifecycleEvent evt) {
 			assertEquals("test", evt.getEventTarget().getId());
 			assertEquals(ResourceLifecycleEvent.EventType.RESOURCE_SHOULD_DESTROY, evt.getEventType());
+			count++;
 		}
 
 		/**
@@ -77,6 +82,7 @@ public class ResourceLifecycleEventTest {
 		public void resourceWillDestroy(ResourceLifecycleEvent evt) {
 			assertEquals("test", evt.getEventTarget().getId());
 			assertEquals(ResourceLifecycleEvent.EventType.RESOURCE_WILL_DESTROY, evt.getEventType());
+			count++;
 		}
 
 		/**
@@ -88,6 +94,14 @@ public class ResourceLifecycleEventTest {
 		public void resourceDidDestory(ResourceLifecycleEvent evt) {
 			assertEquals("test", evt.getEventTarget().getId());
 			assertEquals(ResourceLifecycleEvent.EventType.RESOURCE_DID_DESTROY, evt.getEventType());
+			count++;
+		}
+
+		/**
+		 * @return the count
+		 */
+		public int getCount() {
+			return count;
 		}
 	}
 }
