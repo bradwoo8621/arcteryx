@@ -7,11 +7,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.github.nest.arcteryx.event.IResourceEvent;
 import com.github.nest.arcteryx.event.IResourceEventDispatchers;
 import com.github.nest.arcteryx.event.IResourceRegistrationEventDispatcher;
 import com.github.nest.arcteryx.event.IResourceRegistrationEventListener;
 import com.github.nest.arcteryx.event.ResourceRegistrationEvent;
 import com.github.nest.arcteryx.event.ResourceRegistrationEvent.EventType;
+import com.google.common.base.Strings;
 import com.github.nest.arcteryx.event.ResourceRegistrationEventDispatcher;
 
 /**
@@ -33,7 +35,12 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 	 */
 	@Override
 	public IResource findResource(String resourceId) throws ResourceNotFoundException {
-		return this.resourceMap.get(resourceId);
+		IResource resource = this.resourceMap.get(resourceId);
+		if (resource == null) {
+			throw new ResourceNotFoundException(
+					"Resource[" + resourceId + "] not found in container[" + this.getId() + "]");
+		}
+		return resource;
 	}
 
 	/**
@@ -61,11 +68,15 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 	 */
 	@Override
 	public IResource unregisterResource(String resourceId) {
+		if (Strings.isNullOrEmpty(resourceId)) {
+			throw new IllegalArgumentException("Resource ID cannot be null or empty string when unregister");
+		}
+
 		IResource origin = this.resourceMap.get(resourceId);
 		if (origin != null) {
 			ResourceRegistrationEvent evt = this.processRegistrationEvent(origin, EventType.RESOURCE_SHOULD_UNREGISTER);
 			if (evt.isShouldNot()) {
-				this.getLogger().warn("Stop unregister resource [%1] from component [%2]", resourceId, this.getId());
+				this.getLogger().warn("Stop unregister resource [{}] from component [{}]", resourceId, this.getId());
 				// stop unregister, return null
 				return null;
 			}
@@ -111,6 +122,20 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 	}
 
 	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.nest.arcteryx.AbstractResource#fireEvent(com.github.nest.arcteryx.event.IResourceEvent)
+	 */
+	@Override
+	protected void fireEvent(IResourceEvent evt) {
+		if (evt instanceof ResourceRegistrationEvent) {
+			this.processRegistrationEvent((ResourceRegistrationEvent) evt);
+		} else {
+			super.fireEvent(evt);
+		}
+	}
+
+	/**
 	 * process lifecycle event
 	 * 
 	 * @param eventType
@@ -128,7 +153,7 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 	 * @param evt
 	 */
 	protected void processRegistrationEvent(ResourceRegistrationEvent evt) {
-		this.getLogger().debug("%1 triggerred", evt);
+		this.getLogger().debug("{} triggerred", evt);
 		this.getEventDispatcher(IResourceRegistrationEventDispatcher.class) //
 				.dispatch(evt, this.getEventListeners(IResourceRegistrationEventListener.class));
 	}

@@ -35,7 +35,7 @@ public class ResourceEventListeners implements IResourceEventListeners {
 
 		boolean found = false;
 		for (EventListener eventListener : this.listeners) {
-			if (eventListener.getListenerClass().equals(listenerClass) && eventListener == listener) {
+			if (eventListener.getListenerClass() == listenerClass && eventListener.getListener() == listener) {
 				// already added
 				// do nothing
 				found = true;
@@ -61,8 +61,7 @@ public class ResourceEventListeners implements IResourceEventListeners {
 	 * @see com.github.nest.arcteryx.event.IResourceEventListeners#removeListener(com.github.nest.arcteryx.event.IResourceEventListener,
 	 *      java.lang.Class)
 	 */
-	public synchronized <T extends IResourceEventListener> boolean removeListener(T listener,
-			Class<T> listenerClass) {
+	public synchronized <T extends IResourceEventListener> boolean removeListener(T listener, Class<T> listenerClass) {
 		if (listener == null) {
 			return false;
 		}
@@ -74,12 +73,20 @@ public class ResourceEventListeners implements IResourceEventListeners {
 
 		for (int index = 0, count = this.listeners.length; index < count; index++) {
 			EventListener eventListener = this.listeners[index];
-			if (eventListener.getListenerClass().equals(listenerClass) && eventListener == listener) {
+			if (eventListener.getListenerClass() == listenerClass && eventListener.getListener() == listener) {
 				// found, remove it
 				EventListener[] newListeners = new EventListener[this.listeners.length - 1];
-				System.arraycopy(this.listeners, 0, newListeners, 0, index);
-				if (index < count) {
-					System.arraycopy(this.listeners, index + 1, newListeners, index, count - index);
+				if (index == 0) {
+					// the first removed
+					System.arraycopy(this.listeners, 1, newListeners, 0, newListeners.length);
+				} else if (index == count - 1) {
+					// the last removed
+					System.arraycopy(this.listeners, 0, newListeners, 0, newListeners.length);
+				} else {
+					System.arraycopy(this.listeners, 0, newListeners, 0, index);
+					if (index < count - 1) {
+						System.arraycopy(this.listeners, index + 1, newListeners, index, count - index - 1);
+					}
 				}
 				this.listeners = newListeners;
 				return true;

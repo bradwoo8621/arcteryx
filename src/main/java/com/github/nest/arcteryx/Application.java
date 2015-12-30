@@ -67,7 +67,7 @@ public class Application extends AbstractContainer implements IApplication {
 	 */
 	@Override
 	public IResource registerResource(IResource resource) {
-		if (!(resource instanceof IComponent)) {
+		if (resource != null && !(resource instanceof IComponent)) {
 			throw new IllegalArgumentException(
 					"Resource[" + resource.getId() + "] must be an instance of " + IComponent.class);
 		}

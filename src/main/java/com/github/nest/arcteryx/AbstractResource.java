@@ -18,6 +18,7 @@ import com.github.nest.arcteryx.event.ResourceEventListeners;
 import com.github.nest.arcteryx.event.ResourceLifecycleEvent;
 import com.github.nest.arcteryx.event.ResourceLifecycleEvent.EventType;
 import com.github.nest.arcteryx.event.ResourceLifecycleEventDispatcher;
+import com.google.common.base.Strings;
 
 /**
  * Abstract resource
@@ -35,6 +36,10 @@ public abstract class AbstractResource implements IResource {
 	 * actually fired after constructing.
 	 */
 	public AbstractResource(String id) {
+		if (Strings.isNullOrEmpty(id)) {
+			throw new IllegalArgumentException("Id of resource cannot be null");
+		}
+
 		this.id = id;
 		this.doConstruct();
 		this.processLifecycleEvent(EventType.RESOURCE_DID_CONSTRUCT);
@@ -66,7 +71,7 @@ public abstract class AbstractResource implements IResource {
 		ResourceLifecycleEvent evt = this.processLifecycleEvent(EventType.RESOURCE_SHOULD_DESTROY);
 		if (evt.isShouldNot()) {
 			// stop destroy
-			this.getLogger().warn("Stop destroying resource [%1]", this.getId());
+			this.getLogger().warn("Stop destroying resource [{}]", this.getId());
 			return;
 		}
 
@@ -234,7 +239,7 @@ public abstract class AbstractResource implements IResource {
 	 * @param evt
 	 */
 	protected void processLifecycleEvent(ResourceLifecycleEvent evt) {
-		this.getLogger().debug("%1 triggerred", evt);
+		this.getLogger().debug("{} triggerred", evt);
 		this.getEventDispatcher(IResourceLifecycleEventDispatcher.class) //
 				.dispatch(evt, this.getEventListeners(IResourceLifecycleEventListener.class));
 	}
