@@ -8,4 +8,8 @@ before_script:
 after_success:
   - codecov
   - mvn clean cobertura:cobertura coveralls:report
-  
+
+notifications:
+  slack:
+    rooms:
+      - nest-parrot:z3jqw9krJbPu0CcQBKS90AnZ#build
