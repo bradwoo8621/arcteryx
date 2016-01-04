@@ -21,6 +21,20 @@ public interface IResource {
 	String getId();
 
 	/**
+	 * get container
+	 * 
+	 * @return
+	 */
+	IContainer getContainer();
+
+	/**
+	 * set container
+	 * 
+	 * @param container
+	 */
+	void setContainer(IContainer container);
+
+	/**
 	 * destroy self
 	 */
 	void destroy();

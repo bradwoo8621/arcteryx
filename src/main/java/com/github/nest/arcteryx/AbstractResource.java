@@ -27,6 +27,7 @@ import com.google.common.base.Strings;
  */
 public abstract class AbstractResource implements IResource {
 	private String id = null;
+	private IContainer container = null;
 	private IResourceEventListeners eventListeners = null;
 	private IResourceEventDispatchers eventDispatchers = null;
 
@@ -69,6 +70,26 @@ public abstract class AbstractResource implements IResource {
 	 */
 	protected void setId(String id) {
 		this.id = id;
+	}
+
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.nest.arcteryx.IResource#getContainer()
+	 */
+	@Override
+	public IContainer getContainer() {
+		return this.container;
+	}
+
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.nest.arcteryx.IResource#setContainer(com.github.nest.arcteryx.IContainer)
+	 */
+	@Override
+	public void setContainer(IContainer container) {
+		this.container = container;
 	}
 
 	/**
