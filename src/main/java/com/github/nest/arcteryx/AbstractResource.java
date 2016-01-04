@@ -63,6 +63,15 @@ public abstract class AbstractResource implements IResource {
 	}
 
 	/**
+	 * set id
+	 * 
+	 * @param id
+	 */
+	protected void setId(String id) {
+		this.id = id;
+	}
+
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see com.github.nest.arcteryx.IResource#destroy()
