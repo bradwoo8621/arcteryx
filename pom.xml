@@ -5,12 +5,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.github.nest</groupId>
-	<artifactId>arcteryx</artifactId>
+	<artifactId>arcteryx-core</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
-	<name>arcteryx</name>
-	<url>https://github.com/bradwoo8621/arcteryx</url>
+	<name>arcteryx-core</name>
+	<url>https://github.com/bradwoo8621/arcteryx-core</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -85,14 +85,14 @@
 		</plugins>
 	</build>
 	<issueManagement>
-		<url>https://github.com/bradwoo8621/arcteryx/issues</url>
+		<url>https://github.com/bradwoo8621/arcteryx-core/issues</url>
 	</issueManagement>
 	<scm>
-		<url>https://github.com/bradwoo8621/arcteryx.git</url>
+		<url>https://github.com/bradwoo8621/arcteryx-core.git</url>
 		<developerConnection>bradwoo8621</developerConnection>
 	</scm>
 	<ciManagement>
-		<url>https://travis-ci.org/bradwoo8621/arcteryx</url>
+		<url>https://travis-ci.org/bradwoo8621/arcteryx-core</url>
 		<system>travis</system>
 	</ciManagement>
 </project>
