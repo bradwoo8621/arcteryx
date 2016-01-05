@@ -45,28 +45,9 @@
 		</dependency>
 	</dependencies>
 
-	<build>
+	<!-- <build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<plugins>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.5.201505241946</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.eluder.coveralls</groupId>
 				<artifactId>coveralls-maven-plugin</artifactId>
@@ -82,12 +63,11 @@
 				<configuration>
 					<format>xml</format>
 					<maxmem>256m</maxmem>
-					<!-- aggregated reports for multi-module projects -->
 					<aggregate>true</aggregate>
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>
+	</build> -->
 	<issueManagement>
 		<url>https://github.com/bradwoo8621/arcteryx-core/issues</url>
 	</issueManagement>
