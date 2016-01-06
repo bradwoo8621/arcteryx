@@ -20,10 +20,21 @@ public class Application extends AbstractContainer implements IApplication {
 	 */
 	@Override
 	public boolean accepted(IResource resource) {
-		if (!(resource instanceof IComponent)) {
-			this.getLogger().info("Resource[{}] must be an instance of {}", resource.getId(), IComponent.class);
+		if (resource instanceof IApplication) {
+			// application must has same id with its parent
+			if (!resource.getId().equals(this.getId())) {
+				this.getLogger().error("Application[{}] must have same id with its parent[{}]", resource.getId(),
+						this.getId());
+				return false;
+			} else {
+				return true;
+			}
+		} else if (resource instanceof IComponent) {
+			return true;
+		} else {
+			this.getLogger().info("Resource[{}] must be an instance of {} or {}", resource.getId(), IApplication.class,
+					IComponent.class);
 			return false;
 		}
-		return super.accepted(resource);
 	}
 }

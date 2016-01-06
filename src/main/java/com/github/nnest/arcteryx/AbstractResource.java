@@ -282,4 +282,23 @@ public abstract class AbstractResource implements IResource {
 	protected Logger getLogger() {
 		return LoggerFactory.getLogger(getClass());
 	}
+
+	/**
+	 * original toString from {@linkplain Object#toString()}
+	 * 
+	 * @return
+	 */
+	protected String originalToString() {
+		return super.toString();
+	}
+
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.originalToString() + " [id=" + id + "]";
+	}
 }
