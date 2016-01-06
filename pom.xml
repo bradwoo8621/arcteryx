@@ -70,13 +70,11 @@
 	</build> -->
 	<issueManagement>
 		<url>https://github.com/bradwoo8621/arcteryx-core/issues</url>
+		<system>github</system>
 	</issueManagement>
 	<scm>
 		<url>https://github.com/bradwoo8621/arcteryx-core.git</url>
-		<developerConnection>bradwoo8621</developerConnection>
+		<developerConnection>scm:git:git@github.com:bradwoo8621/arcteryx-core.git</developerConnection>
+		<connection>scm:git:git://github.com/bradwoo8621/arcteryx-core.git</connection>
 	</scm>
-	<ciManagement>
-		<url>https://travis-ci.org/bradwoo8621/arcteryx-core</url>
-		<system>travis</system>
-	</ciManagement>
 </project>
