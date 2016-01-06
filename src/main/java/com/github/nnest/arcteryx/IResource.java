@@ -13,12 +13,22 @@ import com.github.nnest.arcteryx.event.IResourceLifecycleEventListener;
  * @author brad.wu
  */
 public interface IResource {
+	String SEPARATOR = "/";
+	char SEPARATOR_CHAR = '/';
+
 	/**
 	 * get identity
 	 * 
 	 * @return
 	 */
 	String getId();
+
+	/**
+	 * get qualified id, full path
+	 * 
+	 * @return
+	 */
+	String getQualifiedId();
 
 	/**
 	 * get container

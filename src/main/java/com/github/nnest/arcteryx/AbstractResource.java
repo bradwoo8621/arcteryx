@@ -3,6 +3,9 @@
  */
 package com.github.nnest.arcteryx;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,8 +19,9 @@ import com.github.nnest.arcteryx.event.IResourceLifecycleEventListener;
 import com.github.nnest.arcteryx.event.ResourceEventDispatchers;
 import com.github.nnest.arcteryx.event.ResourceEventListeners;
 import com.github.nnest.arcteryx.event.ResourceLifecycleEvent;
-import com.github.nnest.arcteryx.event.ResourceLifecycleEventDispatcher;
 import com.github.nnest.arcteryx.event.ResourceLifecycleEvent.EventType;
+import com.github.nnest.arcteryx.event.ResourceLifecycleEventDispatcher;
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
 /**
@@ -37,11 +41,7 @@ public abstract class AbstractResource implements IResource {
 	 * actually fired after constructing.
 	 */
 	public AbstractResource(String id) {
-		if (Strings.isNullOrEmpty(id)) {
-			throw new IllegalArgumentException("Id of resource cannot be null");
-		}
-
-		this.id = id;
+		this.setId(id);
 		this.doConstruct();
 		this.processLifecycleEvent(EventType.RESOURCE_DID_CONSTRUCT);
 	}
@@ -69,6 +69,10 @@ public abstract class AbstractResource implements IResource {
 	 * @param id
 	 */
 	protected void setId(String id) {
+		if (Strings.isNullOrEmpty(id)) {
+			throw new IllegalArgumentException("Id of resource cannot be null");
+		}
+		
 		this.id = id;
 	}
 
@@ -295,10 +299,31 @@ public abstract class AbstractResource implements IResource {
 	/**
 	 * (non-Javadoc)
 	 * 
+	 * @see com.github.nnest.arcteryx.IResource#getQualifiedId()
+	 */
+	@Override
+	public String getQualifiedId() {
+		IContainer container = this.getContainer();
+		if (container == null) {
+			return this.getId();
+		} else {
+			List<String> ids = new LinkedList<String>();
+			while (container != null) {
+				ids.add(0, container.getId());
+				container = container.getContainer();
+			}
+			ids.add(this.getId());
+			return Joiner.on(IResource.SEPARATOR_CHAR).join(ids);
+		}
+	}
+
+	/**
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return this.originalToString() + " [id=" + id + "]";
+		return this.originalToString() + " [id=" + this.getQualifiedId() + "]";
 	}
 }
