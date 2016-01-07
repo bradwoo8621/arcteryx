@@ -34,6 +34,11 @@
 			<version>19.0</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.13</version>
@@ -45,29 +50,13 @@
 		</dependency>
 	</dependencies>
 
-	<!-- <build>
-		<sourceDirectory>src/main/java</sourceDirectory>
-		<plugins>
-			<plugin>
-				<groupId>org.eluder.coveralls</groupId>
-				<artifactId>coveralls-maven-plugin</artifactId>
-				<version>4.1.0</version>
-				<configuration>
-					<repoToken>tWsE802EkyDrqIcB0TPc2yGyOoZpe6l4u</repoToken>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.7</version>
-				<configuration>
-					<format>xml</format>
-					<maxmem>256m</maxmem>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build> -->
+	<!-- <build> <sourceDirectory>src/main/java</sourceDirectory> <plugins> 
+		<plugin> <groupId>org.eluder.coveralls</groupId> <artifactId>coveralls-maven-plugin</artifactId> 
+		<version>4.1.0</version> <configuration> <repoToken>tWsE802EkyDrqIcB0TPc2yGyOoZpe6l4u</repoToken> 
+		</configuration> </plugin> <plugin> <groupId>org.codehaus.mojo</groupId> 
+		<artifactId>cobertura-maven-plugin</artifactId> <version>2.7</version> <configuration> 
+		<format>xml</format> <maxmem>256m</maxmem> <aggregate>true</aggregate> </configuration> 
+		</plugin> </plugins> </build> -->
 	<issueManagement>
 		<url>https://github.com/bradwoo8621/arcteryx-core/issues</url>
 		<system>github</system>

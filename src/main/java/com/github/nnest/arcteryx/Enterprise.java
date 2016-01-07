@@ -7,9 +7,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
 /**
@@ -49,7 +52,22 @@ public class Enterprise implements IEnterprise {
 	public IApplication getApplication(String applicationId) {
 		IApplication application = this.applications.get(applicationId);
 		if (application == null) {
-			throw new ResourceNotFoundException("Application[" + applicationId + "] not found");
+			throw new ApplicationNotFoundException("Application[" + applicationId + "] not found");
+		} else {
+			return application;
+		}
+	}
+
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.nnest.arcteryx.IEnterprise#getStartedApplication(java.lang.String)
+	 */
+	@Override
+	public IApplication getStartedApplication(String applicationId) {
+		IApplication application = this.applications.getStarted(applicationId);
+		if (application == null) {
+			throw new ApplicationNotStartException("Application[" + applicationId + "] not start or not found");
 		} else {
 			return application;
 		}
@@ -112,7 +130,7 @@ public class Enterprise implements IEnterprise {
 			if (application != null) {
 				this.applications.start(application);
 			} else {
-				throw new ResourceNotFoundException("Application[" + applicationId + "] not found when startup");
+				throw new ApplicationNotFoundException("Application[" + applicationId + "] not found when startup");
 			}
 
 		}
@@ -171,6 +189,49 @@ public class Enterprise implements IEnterprise {
 	}
 
 	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.nnest.arcteryx.IEnterprise#findResource(java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends IResource> T findResource(String qualifiedResourceId) {
+		qualifiedResourceId = ResourceUtils.redressQualifiedId(qualifiedResourceId);
+		if (Strings.isNullOrEmpty(qualifiedResourceId)) {
+			throw new IllegalArgumentException("Qualifired resource id cannot be null");
+		}
+
+		this.getLogger().debug("Get resource by qualified id[{}]", qualifiedResourceId);
+		String[] resourceIdSegments = qualifiedResourceId.split(IResource.SEPARATOR);
+		if (this.getLogger().isDebugEnabled()) {
+			// check enabled to prevent the join cost
+			// change separator to compare segments and qualified id
+			this.getLogger().debug("Qualified resource id segments[{}]", Joiner.on(';').join(resourceIdSegments));
+		}
+
+		// find started application by first segment
+		IContainer container = this.getStartedApplication(resourceIdSegments[0]);
+		if (resourceIdSegments.length == 1) {
+			return (T) container;
+		} else {
+			return container.findResource(StringUtils
+					.join(ArrayUtils.subarray(resourceIdSegments, 1, resourceIdSegments.length), IResource.SEPARATOR));
+		}
+	}
+
+	/**
+	 * verify qualified resource id, remove {@linkplain IResource#SEPARATOR} if
+	 * at first or last character
+	 * 
+	 * @param qualifiedResourceId
+	 * @return
+	 */
+	protected String verifyQualifiedResourceId(String qualifiedResourceId) {
+		return StringUtils.removeEnd(StringUtils.removeStart(qualifiedResourceId, IResource.SEPARATOR),
+				IResource.SEPARATOR);
+	}
+
+	/**
 	 * get logger
 	 * 
 	 * @return
@@ -179,6 +240,11 @@ public class Enterprise implements IEnterprise {
 		return LoggerFactory.getLogger(getClass());
 	}
 
+	/**
+	 * Top level applications container, for synchronization operations purpose
+	 * 
+	 * @author brad.wu
+	 */
 	private static class Applications {
 		private Map<String, IApplication> applications = new HashMap<String, IApplication>();
 		private Map<String, IApplication> startedApplications = new HashMap<String, IApplication>();
@@ -209,6 +275,16 @@ public class Enterprise implements IEnterprise {
 		 */
 		public IApplication get(String applicationId) {
 			return this.applications.get(applicationId);
+		}
+
+		/**
+		 * get started application by given id
+		 * 
+		 * @param applicationId
+		 * @return
+		 */
+		public IApplication getStarted(String applicationId) {
+			return this.startedApplications.get(applicationId);
 		}
 
 		/**

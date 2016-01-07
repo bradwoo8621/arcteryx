@@ -26,12 +26,20 @@ public interface IEnterprise {
 	Collection<IApplication> getStartedApplications();
 
 	/**
-	 * get application by give id
+	 * get application by given id
 	 * 
 	 * @param applicationId
 	 * @return
 	 */
 	IApplication getApplication(String applicationId);
+
+	/**
+	 * get started application by given id
+	 * 
+	 * @param applicationId
+	 * @return
+	 */
+	IApplication getStartedApplication(String applicationId);
 
 	/**
 	 * prepare application, not startup
@@ -87,4 +95,13 @@ public interface IEnterprise {
 	 * @return
 	 */
 	void shutdownApplication(String applicationId);
+
+	/**
+	 * find resource by given qualified id, each segment should be separated by
+	 * {@linkplain IResource#SEPARATOR}
+	 * 
+	 * @param qualifiedResourceId
+	 * @return
+	 */
+	<T extends IResource> T findResource(String qualifiedResourceId);
 }

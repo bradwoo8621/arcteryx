@@ -110,14 +110,14 @@ public class EnterpriseTest {
 		Enterprise e = new Enterprise();
 		e.startupApplication((IApplication) null);
 	}
-	
-	@Test(expected = ResourceNotFoundException.class)
+
+	@Test(expected = ApplicationNotFoundException.class)
 	public void testWrongStartup4() {
 		Enterprise e = new Enterprise();
 		e.startupApplication("a1");
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
+	@Test(expected = ApplicationNotFoundException.class)
 	public void testWroingGet() {
 		Enterprise e = new Enterprise();
 		Application a1 = new Application("a1");

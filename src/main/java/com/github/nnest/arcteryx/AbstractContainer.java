@@ -7,6 +7,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import com.github.nnest.arcteryx.event.IResourceEvent;
 import com.github.nnest.arcteryx.event.IResourceEventDispatchers;
 import com.github.nnest.arcteryx.event.IResourceRegistrationEventDispatcher;
@@ -37,13 +40,61 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends IResource> T findResource(String resourceId) throws ResourceNotFoundException {
-		IResource resource = this.resourceMap.get(resourceId);
-		if (resource == null) {
-			throw new ResourceNotFoundException(
-					"Resource[" + resourceId + "] not found in container[" + this.getId() + "]");
+	public <T extends IResource> T findResource(String resourceId) {
+		if (Strings.isNullOrEmpty(resourceId)) {
+			throw new IllegalArgumentException("Resource id cannot be null");
 		}
-		return (T) resource;
+
+		if (resourceId.indexOf(IResource.SEPARATOR_CHAR) != -1) {
+			// qualified resource id
+			return this.findResource(resourceId.split(IResource.SEPARATOR));
+		} else {
+			// single resource id
+			IResource resource = this.resourceMap.get(resourceId);
+			if (resource == null && this.getLogger().isErrorEnabled()) {
+				this.getLogger().error("Resource[{}] not found in container [{}]", resourceId, this.getQualifiedId());
+			}
+
+			return (T) resource;
+		}
+	}
+
+	/**
+	 * find resource by given resource ids
+	 * 
+	 * @param resourceIds
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends IResource> T findResource(String[] resourceIds) {
+		IContainer container = this;
+		for (int index = 0, count = resourceIds.length - 1; index <= count; index++) {
+			String resourceId = resourceIds[index];
+			IResource resource = container.findResource(resourceId);
+			if (index == count) {
+				return (T) resource;
+			} else if (resource == null) {
+				if (this.getLogger().isErrorEnabled()) {
+					this.getLogger().error("Resource[{}] not found cause by [{}] in container [{}] not found", //
+							StringUtils.join(resourceIds, IResource.SEPARATOR), //
+							StringUtils.join(ArrayUtils.subarray(resourceIds, 0, index + 1), IResource.SEPARATOR),
+							this.getQualifiedId());
+				}
+				return null;
+			} else if (resource instanceof IContainer) {
+				container = (IContainer) resource;
+			} else {
+				if (this.getLogger().isErrorEnabled()) {
+					this.getLogger().error("Resource[{}] not found cause by [{}] in container [{}] is not a container", //
+							StringUtils.join(resourceIds, IResource.SEPARATOR), //
+							StringUtils.join(ArrayUtils.subarray(resourceIds, 0, index + 1), IResource.SEPARATOR),
+							this.getQualifiedId());
+				}
+				return null;
+			}
+		}
+		return (T) container;
 	}
 
 	/**

@@ -4,7 +4,9 @@
 package com.github.nnest.arcteryx;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import com.github.nnest.arcteryx.event.IResourceEvent;
@@ -90,10 +92,9 @@ public class ContainerTest {
 		a.unregisterResource(null);
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
 	public void testGetUnexistedResource() {
 		App a = new App("app");
-		a.findResource("test");
+		assertNull(a.findResource("test"));
 	}
 
 	@Test
@@ -109,6 +110,98 @@ public class ContainerTest {
 		App a = new App("app");
 		Resource res = new Resource("res");
 		a.registerResource(res);
+	}
+
+	@Test
+	public void testFindResource() {
+		Application app1 = new Application("a1");
+		Component comp11 = new Component("c11");
+		comp11.setContainer(app1);
+		app1.registerResource(comp11);
+		Resource res111 = new Resource("r111");
+		res111.setContainer(comp11);
+		comp11.registerResource(res111);
+		// a1/c11/r111
+
+		assertEquals(comp11, app1.findResource("c11"));
+		assertEquals(res111, app1.findResource(StringUtils.join(new String[] { "c11", "r111" }, IResource.SEPARATOR)));
+
+		assertNull(app1.findResource("n1"));
+		assertNull(app1.findResource("n1/n2"));
+
+		assertNull(app1.findResource("c11/r111/n1"));
+
+		Application app2 = new Application("a1");
+		app2.setContainer(app1);
+		app1.registerResource(app2);
+		// a1/c11/r111
+		// a1/a1
+
+		assertEquals(comp11, app1.findResource("c11"));
+		assertEquals(res111, app1.findResource(StringUtils.join(new String[] { "c11", "r111" }, IResource.SEPARATOR)));
+
+		Component comp21 = new Component("c11");
+		comp21.setContainer(app2);
+		app2.registerResource(comp21);
+		// a1/c11/r111
+		// a1/a1/c11
+
+		assertEquals(comp21, app1.findResource("c11"));
+		assertEquals(res111, app1.findResource(StringUtils.join(new String[] { "c11", "r111" }, IResource.SEPARATOR)));
+
+		Component comp12 = new Component("c12");
+		comp12.setContainer(app1);
+		app1.registerResource(comp12);
+		// a1/c11/r111
+		// a1/c12
+		// a1/a1/c11
+
+		assertEquals(comp12, app1.findResource("c12"));
+
+		Component comp23 = new Component("c13");
+		comp23.setContainer(app2);
+		app2.registerResource(comp23);
+		// a1/c11/r111
+		// a1/c12
+		// a1/a1/c11
+		// a1/a1/c13
+
+		assertEquals(comp23, app1.findResource("c13"));
+
+		comp11.unregisterResource("r111");
+		res111.setContainer(comp21);
+		comp21.registerResource(res111);
+		// a1/c11
+		// a1/c12
+		// a1/a1/c11/r111
+		// a1/a1/c13
+
+		assertEquals(res111, app1.findResource("c11/r111"));
+
+		Application app3 = new Application("a1");
+		app3.setContainer(app2);
+		app2.registerResource(app3);
+		// a1/c11
+		// a1/c12
+		// a1/a1/c11/r111
+		// a1/a1/c13
+		// a1/a1/a1
+		assertEquals(comp21, app1.findResource("c11"));
+		assertEquals(comp12, app1.findResource("c12"));
+		assertEquals(comp23, app1.findResource("c13"));
+		assertEquals(res111, app1.findResource("c11/r111"));
+		
+		app2.unregisterResource("c11");
+		comp21.setContainer(app3);
+		app3.registerResource(comp21);
+		// a1/c11
+		// a1/c12
+		// a1/a1/c13
+		// a1/a1/a1/c11/r111
+		assertEquals(comp21, app1.findResource("c11"));
+		assertEquals(comp12, app1.findResource("c12"));
+		assertEquals(comp23, app1.findResource("c13"));
+		assertEquals(res111, app1.findResource("c11/r111"));
 	}
 
 	private static class App extends Application {

@@ -17,10 +17,17 @@ public interface IContainer extends IResource {
 	 * find resource by given resource id
 	 * 
 	 * @param resourceId
-	 * @return
-	 * @throws ResourceNotFoundException
+	 * @return null if not found
 	 */
-	<T extends IResource> T findResource(String resourceId) throws ResourceNotFoundException;
+	<T extends IResource> T findResource(String resourceId);
+
+	/**
+	 * find resource by given resource ids segments
+	 * 
+	 * @param segments
+	 * @return null if not found
+	 */
+	<T extends IResource> T findResource(String[] resourceIds);
 
 	/**
 	 * register resource
