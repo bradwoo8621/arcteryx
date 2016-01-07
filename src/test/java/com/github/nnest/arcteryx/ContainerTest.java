@@ -6,7 +6,6 @@ package com.github.nnest.arcteryx;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import com.github.nnest.arcteryx.event.IResourceEvent;
@@ -114,94 +113,83 @@ public class ContainerTest {
 
 	@Test
 	public void testFindResource() {
-		Application app1 = new Application("a1");
-		Component comp11 = new Component("c11");
-		comp11.setContainer(app1);
-		app1.registerResource(comp11);
-		Resource res111 = new Resource("r111");
-		res111.setContainer(comp11);
-		comp11.registerResource(res111);
-		// a1/c11/r111
+		Application app_level_1 = new Application("app_level_1");
+		Component comp_level_1_1 = new Component("comp_level_1_1");
+		comp_level_1_1.setContainer(app_level_1);
+		app_level_1.registerResource(comp_level_1_1);
+		Resource res_level_1_1_1 = new Resource("res_level_1_1_1");
+		res_level_1_1_1.setContainer(comp_level_1_1);
+		comp_level_1_1.registerResource(res_level_1_1_1);
 
-		assertEquals(comp11, app1.findResource("c11"));
-		assertEquals(res111, app1.findResource(StringUtils.join(new String[] { "c11", "r111" }, IResource.SEPARATOR)));
+		assertEquals(comp_level_1_1, app_level_1.findResource("comp_level_1_1"));
+		assertEquals(res_level_1_1_1, app_level_1.findResource("comp_level_1_1/res_level_1_1_1"));
 
-		assertNull(app1.findResource("n1"));
-		assertNull(app1.findResource("n1/n2"));
+		// not existed component
+		assertNull(app_level_1.findResource("comp_level_1_notexisted"));
+		// not existed component or resource cause by first segment component not exists
+		assertNull(app_level_1.findResource("comp_level_1_notexisted/res_level_1_1_notexisted"));
+		// not existed component or resource cause by its parent is not a container
+		assertNull(app_level_1.findResource("comp_level_1_1/res_level_1_1_1/res_level_1_1_notexisted"));
 
-		assertNull(app1.findResource("c11/r111/n1"));
+		Application app_level_2 = new Application("app_level_1");
+		app_level_2.setContainer(app_level_1);
+		app_level_1.registerResource(app_level_2);
 
-		Application app2 = new Application("a1");
-		app2.setContainer(app1);
-		app1.registerResource(app2);
-		// a1/c11/r111
-		// a1/a1
+		// no component or resource replaced, app_level_2 is empty
+		assertEquals(comp_level_1_1, app_level_1.findResource("comp_level_1_1"));
+		assertEquals(res_level_1_1_1, app_level_1.findResource("comp_level_1_1/res_level_1_1_1"));
 
-		assertEquals(comp11, app1.findResource("c11"));
-		assertEquals(res111, app1.findResource(StringUtils.join(new String[] { "c11", "r111" }, IResource.SEPARATOR)));
+		// component in app_level_2 replace in app_level_1
+		Component comp_level_2_1 = new Component("comp_level_1_1");
+		comp_level_2_1.setContainer(app_level_2);
+		app_level_2.registerResource(comp_level_2_1);
 
-		Component comp21 = new Component("c11");
-		comp21.setContainer(app2);
-		app2.registerResource(comp21);
-		// a1/c11/r111
-		// a1/a1/c11
+		// find the component which replace the same id in app_Level_1
+		assertEquals(comp_level_2_1, app_level_1.findResource("comp_level_1_1"));
+		// resource not replaced, still find the resourc in app_level_1
+		assertEquals(res_level_1_1_1, app_level_1.findResource("comp_level_1_1/res_level_1_1_1"));
 
-		assertEquals(comp21, app1.findResource("c11"));
-		assertEquals(res111, app1.findResource(StringUtils.join(new String[] { "c11", "r111" }, IResource.SEPARATOR)));
+		// a new component in app_level_1
+		Component comp_level_1_2 = new Component("comp_level_1_2");
+		comp_level_1_2.setContainer(app_level_1);
+		app_level_1.registerResource(comp_level_1_2);
 
-		Component comp12 = new Component("c12");
-		comp12.setContainer(app1);
-		app1.registerResource(comp12);
-		// a1/c11/r111
-		// a1/c12
-		// a1/a1/c11
+		// find it
+		assertEquals(comp_level_1_2, app_level_1.findResource("comp_level_1_2"));
 
-		assertEquals(comp12, app1.findResource("c12"));
+		// a new component in app_level_2
+		Component comp_level_2_3 = new Component("comp_level_2_3");
+		comp_level_2_3.setContainer(app_level_2);
+		app_level_2.registerResource(comp_level_2_3);
 
-		Component comp23 = new Component("c13");
-		comp23.setContainer(app2);
-		app2.registerResource(comp23);
-		// a1/c11/r111
-		// a1/c12
-		// a1/a1/c11
-		// a1/a1/c13
+		assertEquals(comp_level_2_3, app_level_1.findResource("comp_level_2_3"));
 
-		assertEquals(comp23, app1.findResource("c13"));
+		// move resource from app_level_1 to app_level_2
+		comp_level_1_1.unregisterResource("res_level_1_1_1");
+		res_level_1_1_1.setContainer(comp_level_2_1);
+		comp_level_2_1.registerResource(res_level_1_1_1);
 
-		comp11.unregisterResource("r111");
-		res111.setContainer(comp21);
-		comp21.registerResource(res111);
-		// a1/c11
-		// a1/c12
-		// a1/a1/c11/r111
-		// a1/a1/c13
+		// find it
+		assertEquals(res_level_1_1_1, app_level_1.findResource("comp_level_1_1/res_level_1_1_1"));
 
-		assertEquals(res111, app1.findResource("c11/r111"));
+		Application app_level_3 = new Application("app_level_1");
+		app_level_3.setContainer(app_level_2);
+		app_level_2.registerResource(app_level_3);
 
-		Application app3 = new Application("a1");
-		app3.setContainer(app2);
-		app2.registerResource(app3);
-		// a1/c11
-		// a1/c12
-		// a1/a1/c11/r111
-		// a1/a1/c13
-		// a1/a1/a1
-		assertEquals(comp21, app1.findResource("c11"));
-		assertEquals(comp12, app1.findResource("c12"));
-		assertEquals(comp23, app1.findResource("c13"));
-		assertEquals(res111, app1.findResource("c11/r111"));
+		assertEquals(comp_level_2_1, app_level_1.findResource("comp_level_1_1"));
+		assertEquals(comp_level_1_2, app_level_1.findResource("comp_level_1_2"));
+		assertEquals(comp_level_2_3, app_level_1.findResource("comp_level_2_3"));
+		assertEquals(res_level_1_1_1, app_level_1.findResource("comp_level_1_1/res_level_1_1_1"));
 		
-		app2.unregisterResource("c11");
-		comp21.setContainer(app3);
-		app3.registerResource(comp21);
-		// a1/c11
-		// a1/c12
-		// a1/a1/c13
-		// a1/a1/a1/c11/r111
-		assertEquals(comp21, app1.findResource("c11"));
-		assertEquals(comp12, app1.findResource("c12"));
-		assertEquals(comp23, app1.findResource("c13"));
-		assertEquals(res111, app1.findResource("c11/r111"));
+		// remove component from app_level_2 to app_level_3
+		app_level_2.unregisterResource("comp_level_1_1");
+		comp_level_2_1.setContainer(app_level_3);
+		app_level_3.registerResource(comp_level_2_1);
+		
+		assertEquals(comp_level_2_1, app_level_1.findResource("comp_level_1_1"));
+		assertEquals(comp_level_1_2, app_level_1.findResource("comp_level_1_2"));
+		assertEquals(comp_level_2_3, app_level_1.findResource("comp_level_2_3"));
+		assertEquals(res_level_1_1_1, app_level_1.findResource("comp_level_1_1/res_level_1_1_1"));
 	}
 
 	private static class App extends Application {

@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Application.</br>
  * Only accepts {@linkplain IApplication} and {@linkplain IComponent} as child
- * resource. For {@linkplain IApplication}, accepts which has same id with
+ * resource. For {@linkplain IApplication} as child, accepts which has same id with
  * current application.
  * 
  * @author brad.wu
