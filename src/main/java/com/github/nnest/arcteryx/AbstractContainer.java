@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,11 +17,8 @@ import com.github.nnest.arcteryx.event.IResourceEventDispatchers;
 import com.github.nnest.arcteryx.event.IResourceRegistrationEventDispatcher;
 import com.github.nnest.arcteryx.event.IResourceRegistrationEventListener;
 import com.github.nnest.arcteryx.event.ResourceRegistrationEvent;
-import com.github.nnest.arcteryx.event.ResourceRegistrationEventDispatcher;
 import com.github.nnest.arcteryx.event.ResourceRegistrationEvent.EventType;
-import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
+import com.github.nnest.arcteryx.event.ResourceRegistrationEventDispatcher;
 
 /**
  * Abstract container
@@ -41,7 +40,7 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IResource> T findResource(String resourceId) {
-		if (Strings.isNullOrEmpty(resourceId)) {
+		if (StringUtils.isEmpty(resourceId)) {
 			throw new IllegalArgumentException("Resource id cannot be null");
 		}
 
@@ -52,7 +51,7 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 			// single resource id
 			IResource resource = this.resourceMap.get(resourceId);
 			if (resource == null && this.getLogger().isErrorEnabled()) {
-				this.getLogger().error("Resource[{}] not found in container [{}]", resourceId, this.getQualifiedId());
+				this.getLogger().info("Resource[{}] not found in container [{}]", resourceId, this.getQualifiedId());
 			}
 
 			return (T) resource;
@@ -75,8 +74,8 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 			if (index == count) {
 				return (T) resource;
 			} else if (resource == null) {
-				if (this.getLogger().isErrorEnabled()) {
-					this.getLogger().error("Resource[{}] not found cause by [{}] in container [{}] not found", //
+				if (this.getLogger().isInfoEnabled()) {
+					this.getLogger().info("Resource[{}] not found cause by [{}] in container [{}] not found", //
 							StringUtils.join(resourceIds, IResource.SEPARATOR), //
 							StringUtils.join(ArrayUtils.subarray(resourceIds, 0, index + 1), IResource.SEPARATOR),
 							this.getQualifiedId());
@@ -85,8 +84,8 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 			} else if (resource instanceof IContainer) {
 				container = (IContainer) resource;
 			} else {
-				if (this.getLogger().isErrorEnabled()) {
-					this.getLogger().error("Resource[{}] not found cause by [{}] in container [{}] is not a container", //
+				if (this.getLogger().isInfoEnabled()) {
+					this.getLogger().info("Resource[{}] not found cause by [{}] in container [{}] is not a container", //
 							StringUtils.join(resourceIds, IResource.SEPARATOR), //
 							StringUtils.join(ArrayUtils.subarray(resourceIds, 0, index + 1), IResource.SEPARATOR),
 							this.getQualifiedId());
@@ -136,7 +135,7 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 	 */
 	@Override
 	public IResource unregisterResource(String resourceId) {
-		if (Strings.isNullOrEmpty(resourceId)) {
+		if (StringUtils.isEmpty(resourceId)) {
 			throw new IllegalArgumentException("Resource ID cannot be null or empty string when unregister");
 		}
 
@@ -178,15 +177,15 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 	@Override
 	public <T extends IResource> Collection<T> getResources(final Class<T> resourceClass) {
 		Collection<IResource> all = this.getResources();
-		return Collections2.filter(all, new Predicate() {
+		return CollectionUtils.select(all, new Predicate() {
 			/**
 			 * (non-Javadoc)
 			 * 
-			 * @see com.google.common.base.Predicate#apply(java.lang.Object)
+			 * @see org.apache.commons.collections4.Predicate#evaluate(java.lang.Object)
 			 */
 			@Override
-			public boolean apply(Object input) {
-				return resourceClass.isInstance(input);
+			public boolean evaluate(Object object) {
+				return resourceClass.isInstance(object);
 			}
 		});
 	}

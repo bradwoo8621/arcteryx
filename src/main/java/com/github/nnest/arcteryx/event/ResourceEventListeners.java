@@ -3,10 +3,9 @@
  */
 package com.github.nnest.arcteryx.event;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.ObjectArrays;
 
 /**
  * Default resource event support
@@ -111,7 +110,7 @@ public class ResourceEventListeners implements IResourceEventListeners {
 				list.add((T) listener.getListener());
 			}
 		}
-		return list.toArray(ObjectArrays.newArray(listenerClass, list.size()));
+		return list.toArray((T[]) Array.newInstance(listenerClass, list.size()));
 	}
 
 	/**

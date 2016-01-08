@@ -128,4 +128,43 @@ public class EnterpriseTest {
 
 		e.getApplication("a3");
 	}
+
+	@Test
+	public void testFindResource() {
+		Application shop = new Application("shop");
+		Component toySaler = new Component("toySaler");
+		toySaler.setContainer(shop);
+		Resource tedBear = new Resource("tedBear");
+		ResourceUtils.registerResource(shop, toySaler);
+		ResourceUtils.registerResource(toySaler, tedBear);
+
+		Enterprise e = new Enterprise();
+		e.startupApplication(shop);
+
+		assertEquals(shop, e.findResource("shop"));
+		assertEquals(toySaler, e.findResource("/shop/toySaler"));
+		assertEquals(tedBear, e.findResource("shop/toySaler/tedBear/"));
+	}
+
+	@Test(expected = ApplicationNotStartException.class)
+	public void testFindResourceNotStarted() {
+		Application shop = new Application("shop");
+
+		Enterprise e = new Enterprise();
+		e.prepareApplication(shop);
+
+		assertEquals(shop, e.findResource("shop"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testFindResourceIncorrectId() {
+		Enterprise e = new Enterprise();
+		e.findResource("");
+	}
+
+	private static class Resource extends AbstractResource {
+		public Resource(String id) {
+			super(id);
+		}
+	}
 }

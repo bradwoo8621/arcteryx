@@ -12,9 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-
 /**
  * enterprise
  * 
@@ -121,7 +118,7 @@ public class Enterprise implements IEnterprise {
 	 */
 	@Override
 	public void startupApplication(String applicationId) {
-		if (Strings.isNullOrEmpty(applicationId)) {
+		if (StringUtils.isEmpty(applicationId)) {
 			throw new IllegalArgumentException("Application ID[" + applicationId + "] cannot be null when startup");
 		}
 		this.getLogger().info("Application[{}] starting up", applicationId);
@@ -196,17 +193,17 @@ public class Enterprise implements IEnterprise {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IResource> T findResource(String qualifiedResourceId) {
-		qualifiedResourceId = ResourceUtils.redressQualifiedId(qualifiedResourceId);
-		if (Strings.isNullOrEmpty(qualifiedResourceId)) {
+		String redressedQualifiedResourceId = ResourceUtils.redressQualifiedId(qualifiedResourceId);
+		if (StringUtils.isEmpty(redressedQualifiedResourceId)) {
 			throw new IllegalArgumentException("Qualifired resource id cannot be null");
 		}
 
-		this.getLogger().debug("Get resource by qualified id[{}]", qualifiedResourceId);
-		String[] resourceIdSegments = qualifiedResourceId.split(IResource.SEPARATOR);
+		this.getLogger().debug("Get resource by qualified id[{}]", redressedQualifiedResourceId);
+		String[] resourceIdSegments = redressedQualifiedResourceId.split(IResource.SEPARATOR);
 		if (this.getLogger().isDebugEnabled()) {
 			// check enabled to prevent the join cost
 			// change separator to compare segments and qualified id
-			this.getLogger().debug("Qualified resource id segments[{}]", Joiner.on(';').join(resourceIdSegments));
+			this.getLogger().debug("Qualified resource id segments[{}]", StringUtils.join(resourceIdSegments, ";"));
 		}
 
 		// find started application by first segment
@@ -217,18 +214,6 @@ public class Enterprise implements IEnterprise {
 			return container.findResource(StringUtils
 					.join(ArrayUtils.subarray(resourceIdSegments, 1, resourceIdSegments.length), IResource.SEPARATOR));
 		}
-	}
-
-	/**
-	 * verify qualified resource id, remove {@linkplain IResource#SEPARATOR} if
-	 * at first or last character
-	 * 
-	 * @param qualifiedResourceId
-	 * @return
-	 */
-	protected String verifyQualifiedResourceId(String qualifiedResourceId) {
-		return StringUtils.removeEnd(StringUtils.removeStart(qualifiedResourceId, IResource.SEPARATOR),
-				IResource.SEPARATOR);
 	}
 
 	/**

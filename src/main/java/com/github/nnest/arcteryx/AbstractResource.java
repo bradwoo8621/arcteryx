@@ -6,6 +6,7 @@ package com.github.nnest.arcteryx;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,8 +22,6 @@ import com.github.nnest.arcteryx.event.ResourceEventListeners;
 import com.github.nnest.arcteryx.event.ResourceLifecycleEvent;
 import com.github.nnest.arcteryx.event.ResourceLifecycleEvent.EventType;
 import com.github.nnest.arcteryx.event.ResourceLifecycleEventDispatcher;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 
 /**
  * Abstract resource
@@ -69,7 +68,7 @@ public abstract class AbstractResource implements IResource {
 	 * @param id
 	 */
 	protected void setId(String id) {
-		if (Strings.isNullOrEmpty(id)) {
+		if (StringUtils.isEmpty(id)) {
 			throw new IllegalArgumentException("Id of resource cannot be null");
 		}
 		
@@ -313,7 +312,7 @@ public abstract class AbstractResource implements IResource {
 				container = container.getContainer();
 			}
 			ids.add(this.getId());
-			return Joiner.on(IResource.SEPARATOR_CHAR).join(ids);
+			return StringUtils.join(ids, IResource.SEPARATOR_CHAR);
 		}
 	}
 
