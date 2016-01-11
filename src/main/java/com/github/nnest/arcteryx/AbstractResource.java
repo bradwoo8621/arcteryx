@@ -31,6 +31,7 @@ import com.github.nnest.arcteryx.event.ResourceLifecycleEventDispatcher;
 public abstract class AbstractResource implements IResource {
 	private String id = null;
 	private IContainer container = null;
+	private ILayer layer = null;
 	private IResourceEventListeners eventListeners = null;
 	private IResourceEventDispatchers eventDispatchers = null;
 
@@ -71,7 +72,7 @@ public abstract class AbstractResource implements IResource {
 		if (StringUtils.isEmpty(id)) {
 			throw new IllegalArgumentException("Id of resource cannot be null");
 		}
-		
+
 		this.id = id;
 	}
 
@@ -93,6 +94,26 @@ public abstract class AbstractResource implements IResource {
 	@Override
 	public void setContainer(IContainer container) {
 		this.container = container;
+	}
+
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.nnest.arcteryx.IResource#getLayer()
+	 */
+	@Override
+	public ILayer getLayer() {
+		return this.layer;
+	}
+
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.nnest.arcteryx.IResource#setLayer(com.github.nnest.arcteryx.ILayer)
+	 */
+	@Override
+	public void setLayer(ILayer layer) {
+		this.layer = layer;
 	}
 
 	/**

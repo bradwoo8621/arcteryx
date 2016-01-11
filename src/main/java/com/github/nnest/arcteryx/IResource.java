@@ -45,6 +45,20 @@ public interface IResource {
 	void setContainer(IContainer container);
 
 	/**
+	 * get layer of resource
+	 * 
+	 * @return
+	 */
+	ILayer getLayer();
+
+	/**
+	 * set layer of resource
+	 * 
+	 * @param layer
+	 */
+	void setLayer(ILayer layer);
+
+	/**
 	 * destroy self
 	 */
 	void destroy();
