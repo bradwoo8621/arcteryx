@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
  * 
  * @author brad.wu
  */
-public final class ResourceUtils {
+public class ResourceUtils {
 	/**
 	 * redress qualified resource id, remove {@linkplain IResource#SEPARATOR} if
 	 * at start or end
