@@ -69,11 +69,21 @@ public abstract class AbstractResource implements IResource {
 	 * @param id
 	 */
 	protected void setId(String id) {
+		this.assertIdNotEmpty(id);
+
+		this.id = id;
+	}
+
+	/**
+	 * assert id not empty.</br>
+	 * override this method to cancel the not empty check for resource id
+	 * 
+	 * @param id
+	 */
+	protected void assertIdNotEmpty(String id) {
 		if (StringUtils.isEmpty(id)) {
 			throw new IllegalArgumentException("Id of resource cannot be null");
 		}
-
-		this.id = id;
 	}
 
 	/**

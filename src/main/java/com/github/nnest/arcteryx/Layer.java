@@ -3,6 +3,8 @@
  */
 package com.github.nnest.arcteryx;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Layer
  * 
@@ -13,12 +15,12 @@ public class Layer implements ILayer {
 	private String parentId = null;
 
 	public Layer(String id) {
-		this.id = id;
+		this(id, "");
 	}
 
 	public Layer(String id, String parentId) {
 		this.id = id;
-		this.parentId = parentId;
+		this.parentId = StringUtils.isEmpty(parentId) ? "" : parentId;
 	}
 
 	/**
