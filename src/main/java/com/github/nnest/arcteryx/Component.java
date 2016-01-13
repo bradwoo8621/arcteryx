@@ -15,16 +15,6 @@ public class Component extends AbstractContainer implements IComponent {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see com.github.nnest.arcteryx.IComponent#getApplication()
-	 */
-	@Override
-	public IApplication getApplication() {
-		return (IApplication) this.getContainer();
-	}
-
-	/**
 	 * Child of component cannot be {@linkplain IApplication}
 	 * 
 	 * @see com.github.nnest.arcteryx.AbstractContainer#accepted(com.github.nnest.arcteryx.IResource)

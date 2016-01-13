@@ -9,10 +9,4 @@ package com.github.nnest.arcteryx;
  * @author brad.wu
  */
 public interface IComponent extends IContainer {
-	/**
-	 * get application
-	 * 
-	 * @return
-	 */
-	IApplication getApplication();
 }
