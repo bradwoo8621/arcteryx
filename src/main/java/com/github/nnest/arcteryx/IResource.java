@@ -49,14 +49,14 @@ public interface IResource {
 	 * 
 	 * @return
 	 */
-	ILayer getLayer();
+	ISystem getLayer();
 
 	/**
 	 * set layer of resource
 	 * 
 	 * @param layer
 	 */
-	void setLayer(ILayer layer);
+	void setLayer(ISystem layer);
 
 	/**
 	 * destroy self

@@ -13,86 +13,81 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * enterprise
+ * enterprise.
  * 
  * @author brad.wu
  */
 public class Enterprise implements IEnterprise {
-	private Applications applications = new Applications();
+	private Systems systems = new Systems();
 
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.nnest.arcteryx.IEnterprise#getApplications()
+	 * @see com.github.nnest.arcteryx.IEnterprise#getSystems()
 	 */
 	@Override
-	public Collection<IApplication> getApplications() {
-		return this.applications.all();
+	public Collection<ISystem> getSystems() {
+		return this.systems.all();
 	}
 
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.nnest.arcteryx.IEnterprise#getStartedApplications()
+	 * @see com.github.nnest.arcteryx.IEnterprise#getStartedSystems()
 	 */
 	@Override
-	public Collection<IApplication> getStartedApplications() {
-		return this.applications.allStarted();
+	public Collection<ISystem> getStartedSystems() {
+		return this.systems.allStarted();
 	}
 
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.nnest.arcteryx.IEnterprise#getApplication(java.lang.String)
+	 * @see com.github.nnest.arcteryx.IEnterprise#getSystem(java.lang.String)
 	 */
 	@Override
-	public IApplication getApplication(String applicationId) {
-		IApplication application = this.applications.get(applicationId);
-		if (application == null) {
-			throw new ApplicationNotFoundException("Application[" + applicationId + "] not found");
+	public ISystem getSystem(String systemId) {
+		return this.systems.get(systemId);
+	}
+
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.nnest.arcteryx.IEnterprise#getStartedSystem(java.lang.String)
+	 */
+	@Override
+	public ISystem getStartedSystem(String systemId) {
+		ISystem system = this.systems.getStarted(systemId);
+		if (system == null) {
+			throw new SystemNotStartException("System [" + systemId + "] not found in started systems");
 		} else {
-			return application;
+			return system;
 		}
 	}
 
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.nnest.arcteryx.IEnterprise#getStartedApplication(java.lang.String)
+	 * @see com.github.nnest.arcteryx.IEnterprise#prepareSystem(com.github.nnest.arcteryx.ISystem)
 	 */
 	@Override
-	public IApplication getStartedApplication(String applicationId) {
-		IApplication application = this.applications.getStarted(applicationId);
-		if (application == null) {
-			throw new ApplicationNotStartException("Application[" + applicationId + "] not start or not found");
-		} else {
-			return application;
-		}
-	}
-
-	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see com.github.nnest.arcteryx.IEnterprise#prepareApplication(com.github.nnest.arcteryx.IApplication)
-	 */
-	@Override
-	public void prepareApplication(IApplication application) {
-		if (application == null) {
-			throw new IllegalArgumentException("Application cannot be null when do preparation");
+	public void prepareSystem(ISystem system) {
+		if (system == null) {
+			throw new IllegalArgumentException("System cannot be null when do preparation");
 		}
 
-		synchronized (this.applications) {
-			String applicationId = application.getId();
-			IApplication origin = this.applications.get(applicationId);
-			if (origin != application) {
-				if (origin != null && this.isApplicationStartup(applicationId)) {
-					// if original application was started, shut down first
-					this.shutdownApplication(applicationId);
+		synchronized (this.systems) {
+			String systemId = system.getId();
+			ISystem origin = this.systems.get(systemId);
+			if (origin != system) {
+				if (origin != null && this.isSystemStartup(systemId)) {
+					// if original system was started, shut down first
+					this.shutdownSystem(systemId);
 				}
-				// prepare new application
-				this.applications.put(application);
+				// prepare new system
+				this.systems.put(system);
 			} else {
-				this.getLogger().info("Application[{}] already prepared", applicationId);
+				this.getLogger().info("System[{}] already prepared", systemId);
 			}
 		}
 	}
@@ -105,8 +100,8 @@ public class Enterprise implements IEnterprise {
 	@Override
 	public void startup() {
 		this.getLogger().info("Enterprise starting up");
-		synchronized (this.applications) {
-			this.applications.startAll();
+		synchronized (this.systems) {
+			this.systems.startAll();
 		}
 		this.getLogger().info("Enterprise started up");
 	}
@@ -114,51 +109,51 @@ public class Enterprise implements IEnterprise {
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.nnest.arcteryx.IEnterprise#startupApplication(java.lang.String)
+	 * @see com.github.nnest.arcteryx.IEnterprise#startupSystem(java.lang.String)
 	 */
 	@Override
-	public void startupApplication(String applicationId) {
-		if (StringUtils.isEmpty(applicationId)) {
-			throw new IllegalArgumentException("Application ID[" + applicationId + "] cannot be null when startup");
+	public void startupSystem(String systemId) {
+		if (StringUtils.isEmpty(systemId)) {
+			throw new IllegalArgumentException("System ID[" + systemId + "] cannot be null when startup");
 		}
-		this.getLogger().info("Application[{}] starting up", applicationId);
-		synchronized (this.applications) {
-			IApplication application = this.applications.get(applicationId);
-			if (application != null) {
-				this.applications.start(application);
+		this.getLogger().info("System[{}] starting up", systemId);
+		synchronized (this.systems) {
+			ISystem system = this.systems.get(systemId);
+			if (system != null) {
+				this.systems.start(system);
 			} else {
-				throw new ApplicationNotFoundException("Application[" + applicationId + "] not found when startup");
+				throw new ResourceNotFoundException("System[" + systemId + "] not found when startup");
 			}
 
 		}
-		this.getLogger().info("Application[{}] started up", applicationId);
+		this.getLogger().info("System[{}] started up", systemId);
 	}
 
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.nnest.arcteryx.IEnterprise#startupApplication(com.github.nnest.arcteryx.IApplication)
+	 * @see com.github.nnest.arcteryx.IEnterprise#startupSystem(com.github.nnest.arcteryx.ISystem)
 	 */
 	@Override
-	public void startupApplication(IApplication application) {
-		if (application == null) {
-			throw new IllegalArgumentException("Application cannot be null when startup");
+	public void startupSystem(ISystem system) {
+		if (system == null) {
+			throw new IllegalArgumentException("System cannot be null when startup");
 		}
-		this.getLogger().info("Application[{}] starting up", application.getId());
-		synchronized (this.applications) {
-			this.applications.start(application);
+		this.getLogger().info("System[{}] starting up", system.getId());
+		synchronized (this.systems) {
+			this.systems.start(system);
 		}
-		this.getLogger().info("Application[{}] started up", application.getId());
+		this.getLogger().info("System[{}] started up", system.getId());
 	}
 
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.nnest.arcteryx.IEnterprise#isApplicationStartup(java.lang.String)
+	 * @see com.github.nnest.arcteryx.IEnterprise#isSystemStartup(java.lang.String)
 	 */
 	@Override
-	public boolean isApplicationStartup(String applicationId) {
-		return this.applications.isStarted(applicationId);
+	public boolean isSystemStartup(String systemId) {
+		return this.systems.isStarted(systemId);
 	}
 
 	/**
@@ -168,20 +163,20 @@ public class Enterprise implements IEnterprise {
 	 */
 	@Override
 	public void shutdown() {
-		synchronized (this.applications) {
-			this.applications.shutdownAll();
+		synchronized (this.systems) {
+			this.systems.shutdownAll();
 		}
 	}
 
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.nnest.arcteryx.IEnterprise#shutdownApplication(java.lang.String)
+	 * @see com.github.nnest.arcteryx.IEnterprise#shutdownSystem(java.lang.String)
 	 */
 	@Override
-	public void shutdownApplication(String applicationId) {
-		synchronized (this.applications) {
-			this.applications.shutdown(applicationId);
+	public void shutdownSystem(String systemId) {
+		synchronized (this.systems) {
+			this.systems.shutdown(systemId);
 		}
 	}
 
@@ -190,7 +185,6 @@ public class Enterprise implements IEnterprise {
 	 * 
 	 * @see com.github.nnest.arcteryx.IEnterprise#findResource(java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IResource> T findResource(String qualifiedResourceId) {
 		String redressedQualifiedResourceId = ResourceUtils.redressQualifiedId(qualifiedResourceId);
@@ -206,13 +200,43 @@ public class Enterprise implements IEnterprise {
 			this.getLogger().debug("Qualified resource id segments[{}]", StringUtils.join(resourceIdSegments, ";"));
 		}
 
-		// find started application by first segment
-		IContainer container = this.getStartedApplication(resourceIdSegments[0]);
-		if (resourceIdSegments.length == 1) {
-			return (T) container;
+		// find started system by first segment
+		T resource = this.findResource(resourceIdSegments);
+		if (resource == null) {
+			this.getLogger().warn("Resource [{}] not found", qualifiedResourceId);
+		}
+		return resource;
+	}
+
+	/**
+	 * find resource
+	 * 
+	 * @param resourceIds
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T extends IResource> T findResource(String[] resourceIds) {
+		ISystem system = this.getStartedSystem(resourceIds[0]);
+		if (resourceIds.length == 1) {
+			return (T) system;
 		} else {
-			return container.findResource(StringUtils
-					.join(ArrayUtils.subarray(resourceIdSegments, 1, resourceIdSegments.length), IResource.SEPARATOR));
+			String[] idRelatedToSystem = ArrayUtils.subarray(resourceIds, 1, resourceIds.length);
+			T resource = system.findResource(idRelatedToSystem);
+			if (resource == null) {
+				ISystem derivation = system.getDerivation();
+				while (derivation != null) {
+					resource = derivation.findResource(idRelatedToSystem);
+					if (resource != null) {
+						return resource;
+					} else {
+						derivation = derivation.getDerivation();
+					}
+				}
+				// not found in derivations
+				return null;
+			} else {
+				return resource;
+			}
 		}
 	}
 
@@ -226,103 +250,103 @@ public class Enterprise implements IEnterprise {
 	}
 
 	/**
-	 * Top level applications container, for synchronization operations purpose
+	 * Top level systems container, for synchronization operations purpose
 	 * 
 	 * @author brad.wu
 	 */
-	private static class Applications {
-		private Map<String, IApplication> applications = new HashMap<String, IApplication>();
-		private Map<String, IApplication> startedApplications = new HashMap<String, IApplication>();
+	private static class Systems {
+		private Map<String, ISystem> systems = new HashMap<String, ISystem>();
+		private Map<String, ISystem> startedSystems = new HashMap<String, ISystem>();
 
 		/**
-		 * get all applications
+		 * get all systems
 		 * 
 		 * @return
 		 */
-		public Collection<IApplication> all() {
-			return this.applications.values();
+		public Collection<ISystem> all() {
+			return this.systems.values();
 		}
 
 		/**
-		 * get all started applications
+		 * get all started systems
 		 * 
 		 * @return
 		 */
-		public Collection<IApplication> allStarted() {
-			return this.startedApplications.values();
+		public Collection<ISystem> allStarted() {
+			return this.startedSystems.values();
 		}
 
 		/**
-		 * get application by given id
+		 * get system by given id
 		 * 
-		 * @param applicationId
+		 * @param systemId
 		 * @return
 		 */
-		public IApplication get(String applicationId) {
-			return this.applications.get(applicationId);
+		public ISystem get(String systemId) {
+			return this.systems.get(systemId);
 		}
 
 		/**
-		 * get started application by given id
+		 * get started system by given id
 		 * 
-		 * @param applicationId
+		 * @param systemId
 		 * @return
 		 */
-		public IApplication getStarted(String applicationId) {
-			return this.startedApplications.get(applicationId);
+		public ISystem getStarted(String systemId) {
+			return this.startedSystems.get(systemId);
 		}
 
 		/**
-		 * put application
+		 * put system
 		 * 
-		 * @param application
+		 * @param system
 		 */
-		public void put(IApplication application) {
-			this.applications.put(application.getId(), application);
+		public void put(ISystem system) {
+			this.systems.put(system.getId(), system);
 		}
 
 		/**
-		 * start all applications
+		 * start all systems
 		 */
 		public void startAll() {
 			this.shutdownAll();
-			this.startedApplications.putAll(this.applications);
+			this.startedSystems.putAll(this.systems);
 		}
 
 		/**
-		 * start appointed application
+		 * start appointed system
 		 * 
-		 * @param application
+		 * @param system
 		 */
-		public void start(IApplication application) {
-			this.put(application);
-			this.startedApplications.put(application.getId(), application);
+		public void start(ISystem system) {
+			this.put(system);
+			this.startedSystems.put(system.getId(), system);
 		}
 
 		/**
-		 * check status by given application id
+		 * check status by given system id
 		 * 
-		 * @param applicationId
+		 * @param systemId
 		 * @return
 		 */
-		public boolean isStarted(String applicationId) {
-			return this.startedApplications.containsKey(applicationId);
+		public boolean isStarted(String systemId) {
+			return this.startedSystems.containsKey(systemId);
 		}
 
 		/**
-		 * shutdown all applications
+		 * shutdown all systems
 		 */
 		public void shutdownAll() {
-			this.startedApplications.clear();
+			this.startedSystems.clear();
 		}
 
 		/**
-		 * shutdown by given application id
+		 * shutdown by given system id
 		 * 
-		 * @param applicationId
+		 * @param systemId
 		 */
-		public void shutdown(String applicationId) {
-			this.startedApplications.remove(applicationId);
+		public void shutdown(String systemId) {
+			this.startedSystems.remove(systemId);
 		}
 	}
 }

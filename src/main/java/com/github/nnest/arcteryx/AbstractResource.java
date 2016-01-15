@@ -31,7 +31,7 @@ import com.github.nnest.arcteryx.event.ResourceLifecycleEventDispatcher;
 public abstract class AbstractResource implements IResource {
 	private String id = null;
 	private IContainer container = null;
-	private ILayer layer = null;
+	private ISystem layer = null;
 	private IResourceEventListeners eventListeners = null;
 	private IResourceEventDispatchers eventDispatchers = null;
 
@@ -112,17 +112,17 @@ public abstract class AbstractResource implements IResource {
 	 * @see com.github.nnest.arcteryx.IResource#getLayer()
 	 */
 	@Override
-	public ILayer getLayer() {
+	public ISystem getLayer() {
 		return this.layer;
 	}
 
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.nnest.arcteryx.IResource#setLayer(com.github.nnest.arcteryx.ILayer)
+	 * @see com.github.nnest.arcteryx.IResource#setLayer(com.github.nnest.arcteryx.ISystem)
 	 */
 	@Override
-	public void setLayer(ILayer layer) {
+	public void setLayer(ISystem layer) {
 		this.layer = layer;
 	}
 

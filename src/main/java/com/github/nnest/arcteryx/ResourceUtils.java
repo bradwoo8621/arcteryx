@@ -3,7 +3,6 @@
  */
 package com.github.nnest.arcteryx;
 
-import org.apache.commons.collections4.map.MultiKeyMap;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -12,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author brad.wu
  */
 public class ResourceUtils {
-	private static MultiKeyMap<String, ILayer> LAYERS = new MultiKeyMap<String, ILayer>();
-
 	/**
 	 * redress qualified resource id, remove {@linkplain IResource#SEPARATOR} if
 	 * at start or end
@@ -48,29 +45,5 @@ public class ResourceUtils {
 			child.setContainer(parent);
 			parent.registerResource(child);
 		}
-	}
-
-	/**
-	 * get layer
-	 * 
-	 * @param layerId
-	 * @param parentLayerId
-	 * @return
-	 */
-	public static ILayer getLayer(String layerId, String parentLayerId) {
-		String redressedLayerId = StringUtils.isEmpty(layerId) ? "" : layerId;
-		String redressedParentLayerId = StringUtils.isEmpty(parentLayerId) ? "" : parentLayerId;
-		
-		ILayer layer = LAYERS.get(redressedLayerId, redressedParentLayerId);
-		if (layer == null) {
-			synchronized (LAYERS) {
-				layer = LAYERS.get(redressedLayerId, redressedParentLayerId);
-				if (layer == null) {
-					layer = new Layer(redressedLayerId, redressedParentLayerId);
-					LAYERS.put(redressedLayerId, redressedParentLayerId, layer);
-				}
-			}
-		}
-		return layer;
 	}
 }

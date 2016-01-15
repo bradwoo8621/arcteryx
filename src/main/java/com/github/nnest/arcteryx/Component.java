@@ -15,15 +15,17 @@ public class Component extends AbstractContainer implements IComponent {
 	}
 
 	/**
-	 * Child of component cannot be {@linkplain IApplication}
+	 * Child of component cannot be {@linkplain IApplication} or
+	 * {@linkplain ISystem}
 	 * 
 	 * @see com.github.nnest.arcteryx.AbstractContainer#accepted(com.github.nnest.arcteryx.IResource)
 	 */
 	@Override
 	public boolean accepted(IResource resource) {
-		if (resource instanceof IApplication) {
+		if (resource instanceof IApplication || resource instanceof ISystem) {
 			// application must has same id with its parent
-			this.getLogger().error("Resource[{}] cannot be an instance of {}", resource.getId(), IApplication.class);
+			this.getLogger().error("Resource[{}] cannot be an instance of {} or {}", resource.getId(),
+					IApplication.class, ISystem.class);
 			return false;
 		} else {
 			return true;

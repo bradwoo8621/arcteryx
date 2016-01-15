@@ -8,19 +8,19 @@ package com.github.nnest.arcteryx;
  * 
  * @author brad.wu
  */
-public class ApplicationNotStartException extends RuntimeException {
+public class ResourceNotFoundException extends RuntimeException {
 	private static final long serialVersionUID = -8908580663301078806L;
 
-	public ApplicationNotStartException(String message, Throwable cause, boolean enableSuppression,
+	public ResourceNotFoundException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 
-	public ApplicationNotStartException(String message, Throwable cause) {
+	public ResourceNotFoundException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public ApplicationNotStartException(String message) {
+	public ResourceNotFoundException(String message) {
 		super(message);
 	}
 }

@@ -6,48 +6,53 @@ package com.github.nnest.arcteryx;
 import java.util.Collection;
 
 /**
- * Enterprise
+ * Enterprise.</br>
+ * Enterprise contains system.
  * 
  * @author brad.wu
+ * @see ISystem
+ * @see IApplication
+ * @see IComponent
+ * @see IResource
  */
 public interface IEnterprise {
 	/**
-	 * get applications
+	 * get systems
 	 * 
 	 * @return
 	 */
-	Collection<IApplication> getApplications();
+	Collection<ISystem> getSystems();
 
 	/**
-	 * get all started applications
+	 * get all started systems
 	 * 
 	 * @return
 	 */
-	Collection<IApplication> getStartedApplications();
+	Collection<ISystem> getStartedSystems();
 
 	/**
-	 * get application by given id
+	 * get system by given id
 	 * 
-	 * @param applicationId
+	 * @param systemId
 	 * @return
 	 */
-	IApplication getApplication(String applicationId);
+	ISystem getSystem(String systemId);
 
 	/**
-	 * get started application by given id
+	 * get started system by given id
 	 * 
-	 * @param applicationId
+	 * @param systemId
 	 * @return
 	 */
-	IApplication getStartedApplication(String applicationId);
+	ISystem getStartedSystem(String systemId);
 
 	/**
-	 * prepare application, not startup
+	 * prepare system, not startup
 	 * 
-	 * @param application
+	 * @param system
 	 * @return
 	 */
-	void prepareApplication(IApplication application);
+	void prepareSystem(ISystem system);
 
 	/**
 	 * startup enterprise
@@ -57,29 +62,28 @@ public interface IEnterprise {
 	void startup();
 
 	/**
-	 * startup application, application should be appended into enterprise
+	 * startup system, system should be appended into enterprise
 	 * 
-	 * @param applicationId
+	 * @param systemId
 	 * @return
 	 */
-	void startupApplication(String applicationId);
+	void startupSystem(String systemId);
 
 	/**
-	 * startup application. if the same application existed, shutdown the old
-	 * one
+	 * startup system. if the same system existed, shutdown the old one
 	 * 
-	 * @param application
+	 * @param system
 	 * @return
 	 */
-	void startupApplication(IApplication application);
+	void startupSystem(ISystem system);
 
 	/**
-	 * check the status of application by given application id
+	 * check the status of system by given system id
 	 * 
-	 * @param applicationId
+	 * @param systemId
 	 * @return
 	 */
-	boolean isApplicationStartup(String applicationId);
+	boolean isSystemStartup(String systemId);
 
 	/**
 	 * shutdown enterprise
@@ -89,12 +93,12 @@ public interface IEnterprise {
 	void shutdown();
 
 	/**
-	 * shutdown application
+	 * shutdown system
 	 * 
-	 * @param applicationId
+	 * @param systemId
 	 * @return
 	 */
-	void shutdownApplication(String applicationId);
+	void shutdownSystem(String systemId);
 
 	/**
 	 * find resource by given qualified id, each segment should be separated by

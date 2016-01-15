@@ -4,6 +4,7 @@
 package com.github.nnest.arcteryx;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,47 +21,47 @@ public class EnterpriseTest {
 	@Test
 	public void testEnterprise() {
 		Enterprise e = new Enterprise();
-		Application a1 = new Application("a1");
-		Application a2 = new Application("a2");
-		Application a3 = new Application("a1"); // same id with a1
+		System a1 = new System("a1");
+		System a2 = new System("a2");
+		System a3 = new System("a1"); // same id with a1
 
 		// prepare
-		e.prepareApplication(a1);
-		assertEquals(a1, e.getApplication("a1"));
+		e.prepareSystem(a1);
+		assertEquals(a1, e.getSystem("a1"));
 
 		// prepare another
-		e.prepareApplication(a2);
-		assertEquals(2, e.getApplications().size());
-		assertEquals(a1, e.getApplication("a1"));
-		assertEquals(0, e.getStartedApplications().size());
+		e.prepareSystem(a2);
+		assertEquals(2, e.getSystems().size());
+		assertEquals(a1, e.getSystem("a1"));
+		assertEquals(0, e.getStartedSystems().size());
 
 		// single startup
-		e.startupApplication("a1");
-		assertEquals(1, e.getStartedApplications().size());
-		assertEquals(a1, e.getStartedApplications().iterator().next());
+		e.startupSystem("a1");
+		assertEquals(1, e.getStartedSystems().size());
+		assertEquals(a1, e.getStartedSystems().iterator().next());
 
 		// startup all
 		e.startup();
-		assertEquals(2, e.getStartedApplications().size());
+		assertEquals(2, e.getStartedSystems().size());
 
 		// single shutdown
-		e.shutdownApplication("a2");
-		assertEquals(1, e.getStartedApplications().size());
-		assertEquals(a1, e.getStartedApplications().iterator().next());
+		e.shutdownSystem("a2");
+		assertEquals(1, e.getStartedSystems().size());
+		assertEquals(a1, e.getStartedSystems().iterator().next());
 
 		// shutdown all
 		e.shutdown();
-		assertEquals(0, e.getStartedApplications().size());
-		assertEquals(2, e.getApplications().size());
+		assertEquals(0, e.getStartedSystems().size());
+		assertEquals(2, e.getSystems().size());
 
 		// startup with duplicated id
-		e.startupApplication(a1);
-		e.startupApplication(a2);
-		assertEquals(2, e.getStartedApplications().size());
-		e.startupApplication(a3);
-		assertEquals(2, e.getStartedApplications().size());
-		List<IApplication> started = new ArrayList<IApplication>(e.getStartedApplications());
-		Collections.sort(started, new Comparator<IApplication>() {
+		e.startupSystem(a1);
+		e.startupSystem(a2);
+		assertEquals(2, e.getStartedSystems().size());
+		e.startupSystem(a3);
+		assertEquals(2, e.getStartedSystems().size());
+		List<ISystem> started = new ArrayList<ISystem>(e.getStartedSystems());
+		Collections.sort(started, new Comparator<ISystem>() {
 			/**
 			 * (non-Javadoc)
 			 * 
@@ -68,7 +69,7 @@ public class EnterpriseTest {
 			 *      java.lang.Object)
 			 */
 			@Override
-			public int compare(IApplication o1, IApplication o2) {
+			public int compare(ISystem o1, ISystem o2) {
 				return o1.getId().compareTo(o2.getId());
 			}
 		});
@@ -76,82 +77,83 @@ public class EnterpriseTest {
 		assertEquals(a2, started.get(1));
 
 		// prepare with duplicate id, and shutdown the existed one
-		e.prepareApplication(a1);
-		assertEquals(2, e.getApplications().size());
-		assertEquals(1, e.getStartedApplications().size());
-		assertEquals(a2, e.getStartedApplications().iterator().next());
+		e.prepareSystem(a1);
+		assertEquals(2, e.getSystems().size());
+		assertEquals(1, e.getStartedSystems().size());
+		assertEquals(a2, e.getStartedSystems().iterator().next());
 
 		// prepare with duplicated id, same and difference instance
-		e.prepareApplication(a1);
-		e.prepareApplication(a3);
-		assertEquals(2, e.getApplications().size());
+		e.prepareSystem(a1);
+		e.prepareSystem(a3);
+		assertEquals(2, e.getSystems().size());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testWrongPrepare() {
 		Enterprise e = new Enterprise();
-		e.prepareApplication(null);
+		e.prepareSystem(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testWrongStartup1() {
 		Enterprise e = new Enterprise();
-		e.startupApplication("");
+		e.startupSystem("");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testWrongStartup2() {
 		Enterprise e = new Enterprise();
-		e.startupApplication((String) null);
+		e.startupSystem((String) null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testWrongStartup3() {
 		Enterprise e = new Enterprise();
-		e.startupApplication((IApplication) null);
+		e.startupSystem((ISystem) null);
 	}
 
-	@Test(expected = ApplicationNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testWrongStartup4() {
 		Enterprise e = new Enterprise();
-		e.startupApplication("a1");
+		e.startupSystem("a1");
 	}
 
-	@Test(expected = ApplicationNotFoundException.class)
 	public void testWroingGet() {
 		Enterprise e = new Enterprise();
-		Application a1 = new Application("a1");
-		Application a2 = new Application("a2");
+		System a1 = new System("a1");
+		System a2 = new System("a2");
 
-		e.prepareApplication(a1);
-		e.prepareApplication(a2);
+		e.prepareSystem(a1);
+		e.prepareSystem(a2);
 
-		e.getApplication("a3");
+		assertNull(e.getSystem("a3"));
 	}
 
 	@Test
 	public void testFindResource() {
+		System system = new System("system");
 		Application shop = new Application("shop");
 		Component toySaler = new Component("toySaler");
 		toySaler.setContainer(shop);
 		Resource tedBear = new Resource("tedBear");
+		ResourceUtils.registerResource(system, shop);
 		ResourceUtils.registerResource(shop, toySaler);
 		ResourceUtils.registerResource(toySaler, tedBear);
 
 		Enterprise e = new Enterprise();
-		e.startupApplication(shop);
+		e.startupSystem(system);
 
-		assertEquals(shop, e.findResource("shop"));
-		assertEquals(toySaler, e.findResource("/shop/toySaler"));
-		assertEquals(tedBear, e.findResource("shop/toySaler/tedBear/"));
+		assertEquals(shop, e.findResource("system/shop"));
+		assertEquals(toySaler, e.findResource("/system/shop/toySaler"));
+		assertEquals(tedBear, e.findResource("system/shop/toySaler/tedBear/"));
 	}
 
-	@Test(expected = ApplicationNotStartException.class)
+	@Test(expected = SystemNotStartException.class)
 	public void testFindResourceNotStarted() {
-		Application shop = new Application("shop");
+		System shop = new System("shop");
 
 		Enterprise e = new Enterprise();
-		e.prepareApplication(shop);
+		e.prepareSystem(shop);
 
 		assertEquals(shop, e.findResource("shop"));
 	}
