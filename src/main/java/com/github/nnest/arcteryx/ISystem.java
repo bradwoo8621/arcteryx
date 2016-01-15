@@ -15,17 +15,16 @@ package com.github.nnest.arcteryx;
  */
 public interface ISystem extends IContainer {
 	/**
-	 * get application by given id
-	 * 
-	 * @param id
-	 * @return
-	 */
-	IApplication getApplication(String id);
-
-	/**
 	 * get derivation system
 	 * 
 	 * @return
 	 */
 	ISystem getDerivation();
+
+	/**
+	 * set derivation system
+	 * 
+	 * @param derivation
+	 */
+	void setDerivation(ISystem derivation);
 }

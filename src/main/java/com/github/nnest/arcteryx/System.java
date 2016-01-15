@@ -23,11 +23,11 @@ public class System extends AbstractContainer implements ISystem {
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.nnest.arcteryx.ISystem#getApplication(java.lang.String)
+	 * @see com.github.nnest.arcteryx.AbstractResource#getSystem()
 	 */
 	@Override
-	public IApplication getApplication(String id) {
-		return this.findResource(id);
+	public ISystem getSystem() {
+		return this;
 	}
 
 	/**
@@ -41,10 +41,11 @@ public class System extends AbstractContainer implements ISystem {
 	}
 
 	/**
-	 * @param derivation
-	 *            the derivation to set
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.nnest.arcteryx.ISystem#setDerivation(com.github.nnest.arcteryx.ISystem)
 	 */
-	protected void setDerivation(ISystem derivation) {
+	public void setDerivation(ISystem derivation) {
 		this.derivation = derivation;
 	}
 

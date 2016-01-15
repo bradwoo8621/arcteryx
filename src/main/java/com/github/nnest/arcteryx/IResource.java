@@ -45,18 +45,18 @@ public interface IResource {
 	void setContainer(IContainer container);
 
 	/**
-	 * get layer of resource
+	 * get system of resource
 	 * 
 	 * @return
 	 */
-	ISystem getLayer();
+	ISystem getSystem();
 
 	/**
-	 * set layer of resource
+	 * set system of resource
 	 * 
-	 * @param layer
+	 * @param system
 	 */
-	void setLayer(ISystem layer);
+	void setSystem(ISystem system);
 
 	/**
 	 * destroy self
