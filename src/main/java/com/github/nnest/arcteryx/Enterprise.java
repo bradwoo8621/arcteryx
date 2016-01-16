@@ -186,8 +186,8 @@ public class Enterprise implements IEnterprise {
 	 * @see com.github.nnest.arcteryx.IEnterprise#findResource(java.lang.String)
 	 */
 	@Override
-	public <T extends IResource> T findResource(String qualifiedResourceId) {
-		String redressedQualifiedResourceId = ResourceUtils.redressQualifiedId(qualifiedResourceId);
+	public <T extends IResource> T findResource(String absolutePath) {
+		String redressedQualifiedResourceId = ResourceUtils.redressQualifiedId(absolutePath);
 		if (StringUtils.isEmpty(redressedQualifiedResourceId)) {
 			throw new IllegalArgumentException("Qualifired resource id cannot be null");
 		}
@@ -203,7 +203,7 @@ public class Enterprise implements IEnterprise {
 		// find started system by first segment
 		T resource = this.findResource(resourceIdSegments);
 		if (resource == null) {
-			this.getLogger().warn("Resource [{}] not found", qualifiedResourceId);
+			this.getLogger().warn("Resource [{}] not found", absolutePath);
 		}
 		return resource;
 	}
@@ -211,16 +211,16 @@ public class Enterprise implements IEnterprise {
 	/**
 	 * find resource
 	 * 
-	 * @param resourceIds
+	 * @param resourcePathSegments
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T extends IResource> T findResource(String[] resourceIds) {
-		ISystem system = this.getStartedSystem(resourceIds[0]);
-		if (resourceIds.length == 1) {
+	protected <T extends IResource> T findResource(String[] resourcePathSegments) {
+		ISystem system = this.getStartedSystem(resourcePathSegments[0]);
+		if (resourcePathSegments.length == 1) {
 			return (T) system;
 		} else {
-			String[] idRelatedToSystem = ArrayUtils.subarray(resourceIds, 1, resourceIds.length);
+			String[] idRelatedToSystem = ArrayUtils.subarray(resourcePathSegments, 1, resourcePathSegments.length);
 			T resource = system.findResource(idRelatedToSystem);
 			if (resource == null) {
 				ISystem derivation = system.getDerivation();

@@ -51,7 +51,7 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 			// single resource id
 			IResource resource = this.resourceMap.get(resourceId);
 			if (resource == null && this.getLogger().isErrorEnabled()) {
-				this.getLogger().info("Resource[{}] not found in container [{}]", resourceId, this.getQualifiedId());
+				this.getLogger().info("Resource[{}] not found in container [{}]", resourceId, this.getPath());
 			}
 
 			return (T) resource;
@@ -78,7 +78,7 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 					this.getLogger().info("Resource[{}] not found cause by [{}] in container [{}] not found", //
 							StringUtils.join(resourceIds, IResource.SEPARATOR), //
 							StringUtils.join(ArrayUtils.subarray(resourceIds, 0, index + 1), IResource.SEPARATOR),
-							this.getQualifiedId());
+							this.getPath());
 				}
 				return null;
 			} else if (resource instanceof IContainer) {
@@ -88,7 +88,7 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 					this.getLogger().info("Resource[{}] not found cause by [{}] in container [{}] is not a container", //
 							StringUtils.join(resourceIds, IResource.SEPARATOR), //
 							StringUtils.join(ArrayUtils.subarray(resourceIds, 0, index + 1), IResource.SEPARATOR),
-							this.getQualifiedId());
+							this.getPath());
 				}
 				return null;
 			}

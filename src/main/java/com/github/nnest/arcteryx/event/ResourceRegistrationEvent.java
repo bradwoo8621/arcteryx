@@ -98,7 +98,7 @@ public class ResourceRegistrationEvent extends AbstractResourceEvent {
 	 */
 	@Override
 	public String toString() {
-		return "ResourceRegistrationEvent [container=" + this.getContainer().getQualifiedId() + ", resource="
-				+ this.getResource().getQualifiedId() + ", type=" + this.getEventType() + "]";
+		return "ResourceRegistrationEvent [container=" + this.getContainer().getPath() + ", resource="
+				+ this.getResource().getPath() + ", type=" + this.getEventType() + "]";
 	}
 }

@@ -101,11 +101,11 @@ public interface IEnterprise {
 	void shutdownSystem(String systemId);
 
 	/**
-	 * find resource by given qualified id, each segment should be separated by
+	 * find resource by given path, each segment should be separated by
 	 * {@linkplain IResource#SEPARATOR}
 	 * 
-	 * @param qualifiedResourceId
+	 * @param absolutePath
 	 * @return
 	 */
-	<T extends IResource> T findResource(String qualifiedResourceId);
+	<T extends IResource> T findResource(String absolutePath);
 }

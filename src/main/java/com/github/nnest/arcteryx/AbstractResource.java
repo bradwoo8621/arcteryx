@@ -329,10 +329,10 @@ public abstract class AbstractResource implements IResource {
 	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.nnest.arcteryx.IResource#getQualifiedId()
+	 * @see com.github.nnest.arcteryx.IResource#getPath()
 	 */
 	@Override
-	public String getQualifiedId() {
+	public String getPath() {
 		IContainer container = this.getContainer();
 		if (container == null) {
 			return this.getId();
@@ -354,6 +354,6 @@ public abstract class AbstractResource implements IResource {
 	 */
 	@Override
 	public String toString() {
-		return this.originalToString() + " [id=" + this.getQualifiedId() + "]";
+		return this.originalToString() + " [id=" + this.getPath() + "]";
 	}
 }

@@ -75,6 +75,6 @@ public class ResourceLifecycleEvent extends AbstractResourceEvent {
 	 */
 	@Override
 	public String toString() {
-		return "ResourceLifecycleEvent [target=" + getEventTarget().getQualifiedId() + ", type=" + getEventType() + "]";
+		return "ResourceLifecycleEvent [target=" + getEventTarget().getPath() + ", type=" + getEventType() + "]";
 	}
 }

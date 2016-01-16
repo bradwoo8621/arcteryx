@@ -24,11 +24,11 @@ public interface IResource {
 	String getId();
 
 	/**
-	 * get qualified id, full path
+	 * get path
 	 * 
 	 * @return
 	 */
-	String getQualifiedId();
+	String getPath();
 
 	/**
 	 * get container
