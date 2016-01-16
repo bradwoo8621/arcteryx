@@ -187,21 +187,21 @@ public class Enterprise implements IEnterprise {
 	 */
 	@Override
 	public <T extends IResource> T findResource(String absolutePath) {
-		String redressedQualifiedResourceId = ResourceUtils.redressQualifiedId(absolutePath);
-		if (StringUtils.isEmpty(redressedQualifiedResourceId)) {
-			throw new IllegalArgumentException("Qualifired resource id cannot be null");
+		String redressedAbsolutePath = ResourceUtils.redressResourcePath(absolutePath);
+		if (StringUtils.isEmpty(redressedAbsolutePath)) {
+			throw new IllegalArgumentException("Resource path cannot be null");
 		}
 
-		this.getLogger().debug("Get resource by qualified id[{}]", redressedQualifiedResourceId);
-		String[] resourceIdSegments = redressedQualifiedResourceId.split(IResource.SEPARATOR);
+		this.getLogger().debug("Get resource by path [{}]", redressedAbsolutePath);
+		String[] pathSegments = redressedAbsolutePath.split(IResource.SEPARATOR);
 		if (this.getLogger().isDebugEnabled()) {
 			// check enabled to prevent the join cost
-			// change separator to compare segments and qualified id
-			this.getLogger().debug("Qualified resource id segments[{}]", StringUtils.join(resourceIdSegments, ";"));
+			// change separator to compare segments and give path
+			this.getLogger().debug("Resource path segments [{}]", new Object[] { pathSegments });
 		}
 
 		// find started system by first segment
-		T resource = this.findResource(resourceIdSegments);
+		T resource = this.findResource(pathSegments);
 		if (resource == null) {
 			this.getLogger().warn("Resource [{}] not found", absolutePath);
 		}

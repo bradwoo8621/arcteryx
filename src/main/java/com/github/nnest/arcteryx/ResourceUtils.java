@@ -12,17 +12,17 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ResourceUtils {
 	/**
-	 * redress qualified resource id, remove {@linkplain IResource#SEPARATOR} if
+	 * redress resource path, remove {@linkplain IResource#SEPARATOR} if
 	 * at start or end
 	 * 
-	 * @param qualifiedId
+	 * @param resourcePath
 	 * @return
 	 */
-	public static String redressQualifiedId(String qualifiedId) {
-		if (StringUtils.isEmpty(qualifiedId)) {
-			return qualifiedId;
+	public static String redressResourcePath(String resourcePath) {
+		if (StringUtils.isEmpty(resourcePath)) {
+			return resourcePath;
 		}
-		return StringUtils.removeStart(StringUtils.removeEnd(qualifiedId, IResource.SEPARATOR), IResource.SEPARATOR);
+		return StringUtils.removeStart(StringUtils.removeEnd(resourcePath, IResource.SEPARATOR), IResource.SEPARATOR);
 	}
 
 	/**

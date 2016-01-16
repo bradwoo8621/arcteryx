@@ -39,19 +39,17 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends IResource> T findResource(String resourceId) {
-		if (StringUtils.isEmpty(resourceId)) {
-			throw new IllegalArgumentException("Resource id cannot be null");
+	public <T extends IResource> T findResource(String relativePath) {
+		if (StringUtils.isEmpty(relativePath)) {
+			throw new IllegalArgumentException("Resource path cannot be null");
 		}
 
-		if (resourceId.indexOf(IResource.SEPARATOR_CHAR) != -1) {
-			// qualified resource id
-			return this.findResource(resourceId.split(IResource.SEPARATOR));
+		if (relativePath.indexOf(IResource.SEPARATOR_CHAR) != -1) {
+			return this.findResource(relativePath.split(IResource.SEPARATOR));
 		} else {
-			// single resource id
-			IResource resource = this.resourceMap.get(resourceId);
+			IResource resource = this.resourceMap.get(relativePath);
 			if (resource == null && this.getLogger().isErrorEnabled()) {
-				this.getLogger().info("Resource[{}] not found in container [{}]", resourceId, this.getPath());
+				this.getLogger().info("Resource[{}] not found in container [{}]", relativePath, this.getPath());
 			}
 
 			return (T) resource;
@@ -61,23 +59,23 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 	/**
 	 * find resource by given resource ids
 	 * 
-	 * @param resourceIds
+	 * @param relativePath
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends IResource> T findResource(String[] resourceIds) {
+	public <T extends IResource> T findResource(String[] relativePath) {
 		IContainer container = this;
-		for (int index = 0, count = resourceIds.length - 1; index <= count; index++) {
-			String resourceId = resourceIds[index];
+		for (int index = 0, count = relativePath.length - 1; index <= count; index++) {
+			String resourceId = relativePath[index];
 			IResource resource = container.findResource(resourceId);
 			if (index == count) {
 				return (T) resource;
 			} else if (resource == null) {
 				if (this.getLogger().isInfoEnabled()) {
 					this.getLogger().info("Resource[{}] not found cause by [{}] in container [{}] not found", //
-							StringUtils.join(resourceIds, IResource.SEPARATOR), //
-							StringUtils.join(ArrayUtils.subarray(resourceIds, 0, index + 1), IResource.SEPARATOR),
+							StringUtils.join(relativePath, IResource.SEPARATOR), //
+							StringUtils.join(ArrayUtils.subarray(relativePath, 0, index + 1), IResource.SEPARATOR),
 							this.getPath());
 				}
 				return null;
@@ -86,8 +84,8 @@ public abstract class AbstractContainer extends AbstractResource implements ICon
 			} else {
 				if (this.getLogger().isInfoEnabled()) {
 					this.getLogger().info("Resource[{}] not found cause by [{}] in container [{}] is not a container", //
-							StringUtils.join(resourceIds, IResource.SEPARATOR), //
-							StringUtils.join(ArrayUtils.subarray(resourceIds, 0, index + 1), IResource.SEPARATOR),
+							StringUtils.join(relativePath, IResource.SEPARATOR), //
+							StringUtils.join(ArrayUtils.subarray(relativePath, 0, index + 1), IResource.SEPARATOR),
 							this.getPath());
 				}
 				return null;

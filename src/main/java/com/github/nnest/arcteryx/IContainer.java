@@ -16,18 +16,18 @@ public interface IContainer extends IResource {
 	/**
 	 * find resource by given resource id
 	 * 
-	 * @param resourceId
+	 * @param relativePath
 	 * @return null if not found
 	 */
-	<T extends IResource> T findResource(String resourceId);
+	<T extends IResource> T findResource(String relativePath);
 
 	/**
 	 * find resource by given resource ids segments
 	 * 
-	 * @param segments
+	 * @param relativePath
 	 * @return null if not found
 	 */
-	<T extends IResource> T findResource(String[] resourceIds);
+	<T extends IResource> T findResource(String[] relativePath);
 
 	/**
 	 * register resource
